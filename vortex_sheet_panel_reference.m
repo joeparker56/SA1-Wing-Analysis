@@ -1,0 +1,69 @@
+clear;
+close all;
+xmin = -2.5;
+xmax = 2.5;
+ymin = -2;
+ymax = 2;
+ny = 41;
+nx = 51;
+del = 1.5;
+gamma_a = 0.5;
+gamma_b = 1.5;
+nv=100;
+yc=0;
+psi_approx = zeros(nx, ny);
+infa = zeros(nx,ny) ;
+infb = zeros(nx, ny);
+xm = zeros(nx, ny);
+ym = zeros(nx, ny);
+psi_analy = zeros(nx,ny);
+
+
+for i = 1:nx
+    for j = 1:ny
+        xm(i,j) = xmin + (i-1)*(xmax-xmin)/(nx-1);
+        ym(i,j) = ymin + (j-1)*(ymax-ymin)/(ny-1);
+        [infa(i,j), infb(i,j)] = refpainf(del, xm(i,j), ym(i,j));
+        psi_analy(i,j) = gamma_a*infa(i,j) + gamma_b *infb(i,j);
+            
+    end
+end
+for n = 1:nv
+    xc = (2*n-1)*del/(2*nv);
+    Gamma = (gamma_a*(del-xc)/del + gamma_b*xc/del)*del/nv;
+    for i = 1:nx
+        for j = 1:ny
+            psi_approx(i,j) = psi_approx(i,j) + psipv(xc, yc, Gamma, xm(i,j), ym(i,j));
+        end 
+    end
+end
+
+
+c = -0.15:0.05:0.15;
+
+
+
+
+
+contour(xm,ym,infa,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of influence coefficient a');
+
+figure(2);
+contour(xm,ym,infb,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of influence coefficient b');
+
+figure(3);
+contour(xm,ym,psi_analy,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of the analytical solution');
+
+figure(4);
+contour(xm,ym,psi_approx,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of discretised approximation');
