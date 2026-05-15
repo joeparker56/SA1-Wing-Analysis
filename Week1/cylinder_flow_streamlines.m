@@ -1,5 +1,5 @@
 
-
+clear;
 xmin = -2.5;
 xmax = 2.5;
 ymin = -2;

@@ -5,5 +5,5 @@ function [infa, infb] = panelinf(xa, ya, xb, yb, x, y)
     n = [(yb-ya), -(xb-xa)]/del;
     X = dot(r, t);
     Y = dot(r, n);
-    [infa, infb] = refpainf(del, X, Y)
+    [infa, infb] = refpainf(del, X, Y);
 end 

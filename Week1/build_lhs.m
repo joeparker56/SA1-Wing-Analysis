@@ -11,7 +11,7 @@ function lhsmat = build_lhs(xs, ys)
     for j=2:np % main loop to generate psip matrix
         for i=1:np
             [infa(i, j), infb(i,j)] = panelinf(xs(j), ys(j), xs(j+1), ys(j+1), xs(i), ys(i));
-            psip(i,j) = infa(i,j) + infa(i,j-1);
+            psip(i,j) = infa(i,j) + infb(i,j-1);
         end
     end
 
