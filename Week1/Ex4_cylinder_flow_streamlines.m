@@ -47,6 +47,8 @@ xlabel('x');
 ylabel('y');
 title('Contour plot of flow around cylinder');
 
+
 hold on
 plot(xs,ys)
 hold off
+print -deps2c cylinder_flow_ex_4.eps;
