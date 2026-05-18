@@ -27,14 +27,14 @@
 
 \maketitle
 
-\section{Point Vortex Stream Function}
+\section{Point vortex stream function}
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{Week1/Exercise 1/point_vortex_contour_ex1.eps}
-    \caption{Contour plot for a point vortex (Exercise 1)}
+    \caption{Stream function plot for a point vortex. (Exercise 1)}
     \label{fig:placeholder}
 \end{figure}
-\begin{lstlisting}[language=Matlab, caption=Code for producing the streamfunction plot of a point vortex. (Exercise 1)]
+\begin{lstlisting}[language=Matlab, caption=The function to evaluate the stream function due to a point vortex at an arbitrary point. (Exercise 1)]
 function psixy = psipv(xc, yc, Gamma, x, y)
     %x and y can be matricies 
     %find the elementwise squared distance
@@ -42,8 +42,8 @@ function psixy = psipv(xc, yc, Gamma, x, y)
     %evaluate the streamfunction elementwise
     psixy = - (Gamma / (4 * pi)) * log(r_2);
 end
-
-
+\end{lstlisting}
+\begin{lstlisting}[language=Matlab, caption={The script for plotting the stream function of a point vortex with $\Gamma =3$ and $(x_c, y_c) = (0.5, 0.25)$. (Exercise 1)}]
 xmin = -2.5; xmax = 2.5;
 ymin = -2;   ymax = 2;
 nx = 51; ny = 41;
@@ -64,7 +64,7 @@ contour(xm, ym, psi, c);
 
 
 \end{lstlisting}
-
+\newpage
 \section{Reference vortex-sheet-panel stream function}
 \begin{figure}[h]
      \centering
@@ -94,11 +94,11 @@ contour(xm, ym, psi, c);
          \caption{Approximate Influence Factor B, $f_b$}
          \label{fig:five over x}
      \end{subfigure}
-    \caption{Reference vortex sheet panel stream function plots}
+    \caption{Reference vortex sheet panel stream function plots.}
     \label{fig:three graphs}
 \end{figure}
 
-\begin{lstlisting}[language=Matlab, caption=Code for producing the stream function plot of a reference vortex sheet panel. (Exercise 2)]
+\begin{lstlisting}[language=Matlab, caption={Function for evaluating influence coefficients $f_a$, $f_b$ at an arbitrary point due to a reference vortex sheet which starts at $(0,0)$, has length $\Delta$ and is along the x-axis. (Exercise 2)}]
 function [infa, infb] = refpainf(del, X, Yin)
     if abs(Yin) <1e-6
         Y = 1e-6;
@@ -111,7 +111,10 @@ function [infa, infb] = refpainf(del, X, Yin)
     infa = (1-(X/del))*I0 - I1/del;
     infb = (X/del)*I0 + I1/del;
 end
+\end{lstlisting}
 
+
+\begin{lstlisting}[language=Matlab, caption=Script for plotting the stream function of a reference vortex sheet panel . (Exercise 2)]
 clear;
 close all;
 xmin = -2.5;
@@ -179,6 +182,7 @@ title('Contour plot of discretised approximation');
 
 \end{lstlisting}
 
+\newpage
 \section{General vortex-sheet-panel stream function}
 \begin{figure}[h]
      \centering
@@ -208,21 +212,22 @@ title('Contour plot of discretised approximation');
          \caption{Approximate Influence Factor B, $f_b$}
          \label{fig:five over x}
      \end{subfigure}
-    \caption{General vortex sheet panel stream function plots}
+    \caption{General vortex-sheet-panel stream function plots.}
     \label{fig:three graphs}
 \end{figure}
 
-\begin{lstlisting}[language=Matlab, caption=Code for producing the stream function plot of a general vortex sheet panel. (Exercise 3)]
+\begin{lstlisting}[language=Matlab, caption=Function for evaluating the influence coefficients for any vortex-sheet-panel at an arbitrary point in space. (Exercise 3)]
 function [infa, infb] = panelinf(xa, ya, xb, yb, x, y)
-    del = norm([(xb-xa), (yb-ya)]);
-    r = [(x-xa), (y-ya)];
-    t = [(xb-xa), (yb-ya)]/del;
-    n = [(yb-ya), -(xb-xa)]/del;
-    X = dot(r, t);
-    Y = dot(r, n);
-    [infa, infb] = refpainf(del, X, Y);
+    del = norm([(xb-xa), (yb-ya)]); %find the length of the sheet panel
+    r = [(x-xa), (y-ya)]; %define the vector from the start of the sheet panel to the arbitrary point (x,y) 
+    t = [(xb-xa), (yb-ya)]/del; %find the unit vector tangential to the sheet panel
+    n = [(yb-ya), -(xb-xa)]/del; %find the unit vector normal to the sheet panel
+    X = dot(r, t); %find the tangential distance from the sheet panel
+    Y = dot(r, n); %find the perpendicular distance from the sheet panel
+    [infa, infb] = refpainf(del, X, Y); %evaluate the streamfunction using the reference sheet panel function
 end 
-
+\end{lstlisting}
+\begin{lstlisting}[language=Matlab, caption=Script for plotting streamfunction for an inclined vortex-sheet-panel. (Exercise 3)]
 clear;
 close all;
 xmin = 0;
@@ -232,8 +237,8 @@ ymax = 4;
 ny = 41;
 nx = 51;
 del = 1.5;
-gamma_a = 0.5;
-gamma_b = 1.5;
+%gamma_a = 0.5;
+%gamma_b = 1.5;
 nv=100;
 yc=0;
 psi_approx = zeros(nx, ny);
@@ -242,19 +247,20 @@ infb = zeros(nx, ny);
 xm = zeros(nx, ny);
 ym = zeros(nx, ny);
 psi_analy = zeros(nx,ny);
+infa_approx = zeros(nx,ny);
+infb_approx = zeros(nx,ny);
 xa = 3.5;
 ya = 2.5;
 xb = 1.6;
 yb = 1.1;
-
 
 for i = 1:nx
     for j = 1:ny
         xm(i,j) = xmin + (i-1)*(xmax-xmin)/(nx-1);
         ym(i,j) = ymin + (j-1)*(ymax-ymin)/(ny-1);
         [infa(i,j), infb(i,j)] = panelinf(xa, ya, xb, yb, xm(i,j), ym(i,j));
-        psi_analy(i,j) = gamma_a*infa(i,j) + gamma_b *infb(i,j);
-            
+        %psi_analy(i,j) = gamma_a*infa(i,j) + gamma_b *infb(i,j); 
+      
     end
 end
 
@@ -265,12 +271,32 @@ dl = panel_length/nv;
 pl_vec = [(xb-xa), (yb-ya)]/norm([(xb-xa), (yb-ya)]);
 a = [xa,ya];
 b = [xb, yb];
+gamma_a = 1.0;
+gamma_b = 0;
+
+%evaluate approximate influence coefficient a using 100 point vorticies 
+for n = 1:nv
+    %this code is designed to evaluate arbitrary values of gamma_a and
+    %gamma_b but has been adapted to just evaluate influence a and
+    %influence b
+    centre = a + ((2*n-1)/2)*dl*pl_vec;
+    Gamma = (gamma_a*norm(b-centre)/panel_length + gamma_b*norm(centre-a)/panel_length)*dl; %the interpolation of the two gammas to find an estimate of the point vortex size
+    for i = 1:nx
+        for j = 1:ny
+            infa_approx(i,j) = infa_approx(i,j) + psipv(centre(1), centre(2), Gamma, xm(i,j), ym(i,j));
+        end 
+    end
+end
+
+%evaluate approximate influence coefficient b using 100 point vcorticies 
+gamma_b = 1.0;
+gamma_a = 0;
 for n = 1:nv
     centre = a + ((2*n-1)/2)*dl*pl_vec;
     Gamma = (gamma_a*norm(b-centre)/panel_length + gamma_b*norm(centre-a)/panel_length)*dl;
     for i = 1:nx
         for j = 1:ny
-            psi_approx(i,j) = psi_approx(i,j) + psipv(centre(1), centre(2), Gamma, xm(i,j), ym(i,j));
+            infb_approx(i,j) = infb_approx(i,j) + psipv(centre(1), centre(2), Gamma, xm(i,j), ym(i,j));
         end 
     end
 end
@@ -281,6 +307,7 @@ contour(xm,ym,infa,c);
 xlabel('x');
 ylabel('y');
 title('Contour plot of influence coefficient a');
+print -deps2c infa_ex3.eps;
 
 
 figure(2);
@@ -288,23 +315,26 @@ contour(xm,ym,infb,c);
 xlabel('x');
 ylabel('y');
 title('Contour plot of influence coefficient b');
+print -deps2c infb_ex3.eps;
 
 
 figure(3);
-contour(xm,ym,psi_analy,c);
+contour(xm,ym,infa_approx,c);
 xlabel('x');
 ylabel('y');
-title('Contour plot of the analytical solution');
+title('Contour plot of the approximate influence coefficient a');
+print -deps2c infa_approx_ex3.eps;
 
 
 figure(4);
-contour(xm,ym,psi_approx,c);
+contour(xm,ym,infb_approx,c);
 xlabel('x');
 ylabel('y');
-title('Contour plot of discretised approximation');
+title('Contour plot of the approximate influence coefficient b');
+print -deps2c infb_approx_ex3.eps;
 
 \end{lstlisting}
-
+\newpage
 \section{Cylinder flow streamlines}
 
 \begin{figure}[h]
@@ -314,7 +344,7 @@ title('Contour plot of discretised approximation');
     \label{fig:placeholder}
 \end{figure}
 
-\begin{lstlisting}[language=Matlab, caption=Code for producing the stream function plot of a cylinder. (Exercise 4)]
+\begin{lstlisting}[language=Matlab, caption=Script for producing the stream function plot of a cylinder. (Exercise 4)]
 clear;
 xmin = -2.5;
 xmax = 2.5;
@@ -406,7 +436,7 @@ When $\alpha = \frac{\pi}{24}$ then the circulation $\Gamma = 0.7794$
     \label{fig:three graphs}
 \end{figure}
 
-\begin{lstlisting}[language=Matlab, caption=Code for solving the panel method around a cylinder with an angle of attack (Exercise 5)]
+\begin{lstlisting}[language=Matlab, caption=Function for generating the $\mathbf{A}$ matrix to solve the panel method problem. (Exercise 5)]
 function lhsmat = build_lhs(xs, ys)
     np = length(xs)-1;
     psip = zeros(np, np+1);
@@ -441,7 +471,8 @@ function lhsmat = build_lhs(xs, ys)
     lhsmat(np+1,1)=1;
 
 end
-
+\end{lstlisting}
+\begin{lstlisting}[language=Matlab, caption=Function for generating the $\mathbf{b}$ vector for the panel method problem. (Exercise 5)]
 function rhsvec = build_rhs(xs,ys, alpha)
     np = length(xs)-1; 
     rhsvec = zeros(np+1, 1); %column vector b 
@@ -457,7 +488,8 @@ function rhsvec = build_rhs(xs,ys, alpha)
     rhsvec(np+1,1)=0;
     %keep b(np) and b(np+1)=0 such that gamma_0=1 and gamma_0 = gamma_np+1
 end
-
+\end{lstlisting}
+\begin{lstlisting}[language=Matlab, caption=Script for solving the panel method problem for a cylinder at an angle of attack. (Exercise 5)]
 clear;
 xmin = -2.5;
 xmax = 2.5;
