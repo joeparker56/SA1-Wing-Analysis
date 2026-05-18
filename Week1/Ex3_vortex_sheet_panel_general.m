@@ -62,17 +62,20 @@ xlabel('x');
 ylabel('y');
 title('Contour plot of influence coefficient a');
 
+
 figure(2);
 contour(xm,ym,infb,c);
 xlabel('x');
 ylabel('y');
 title('Contour plot of influence coefficient b');
 
+
 figure(3);
 contour(xm,ym,psi_analy,c);
 xlabel('x');
 ylabel('y');
 title('Contour plot of the analytical solution');
+
 
 figure(4);
 contour(xm,ym,psi_approx,c);
