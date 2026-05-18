@@ -10,7 +10,7 @@ psi = zeros(nx, ny);
 psi_fs = zeros(nx,ny);
 xm = zeros(nx, ny);
 ym = zeros(nx, ny);
-alpha = pi/24;
+alpha = 0;
 
 np = 100;
 theta = (0:np)*2*pi/np;
@@ -50,7 +50,7 @@ end
 contour(xm,ym,psi,c);
 xlabel('x');
 ylabel('y');
-title('Contour plot of flow around cylinder for alpha = pi/24');
+title('Contour plot of flow around cylinder for alpha = 0');
 
 hold on
 plot(xs,ys)
@@ -62,5 +62,5 @@ figure(2);
 plot(theta_pi,gam);
 xlabel('θ/π');
 ylabel('Surface velocity (γ)');
-title('Plot of surface velocity against theta for alpha = pi/24')
+title('Plot of surface velocity against theta for alpha = 0')
 axis([0 2 -2.5 2.5]);
