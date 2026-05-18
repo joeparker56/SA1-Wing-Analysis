@@ -1,7 +1,25 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
-
-\title{GA2 - Week 1 Report}
+\usepackage{epstopdf}
+\usepackage{listings}
+\usepackage{xcolor} % Optional: used for custom code colors
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[margin=1.5cm]{geometry}
+\captionsetup{justification=centering}
+% Optional: Basic configuration for the code appearance
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{green!70!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    frame=single
+}
+\title{SA1 - Week 1 Report}
 \author{jp2056 }
 \date{May 2026}
 
@@ -9,7 +27,202 @@
 
 \maketitle
 
-\section{Exercise 1}
+\section{Point Vortex Stream Function}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Week1/Exercise 1/PointVortexContour.eps}
+    \caption{Contour plot for a point vortex (Exercise 1)}
+    \label{fig:placeholder}
+\end{figure}
+\begin{lstlisting}[language=Matlab, caption=Code for producing the streamfunction plot of a point vortex. (Exercise 1)]
+function psixy = psipv(xc, yc, Gamma, x, y)
+    %x and y can be matricies 
+    %find the elementwise squared distance
+    r_2 = (x-xc).^2 + (y-yc).^2; 
+    %evaluate the streamfunction elementwise
+    psixy = - (Gamma / (4 * pi)) * log(r_2);
+end
 
+
+xmin = -2.5; xmax = 2.5;
+ymin = -2;   ymax = 2;
+nx = 51; ny = 41;
+Gamma = 3.0;
+xc = 0.5; yc = 0.25;
+
+x = linspace(xmin, xmax, nx);
+y = linspace(ymin, ymax, ny);
+
+%create a matrix of x, and matrix of y coordinates
+[xm, ym] = meshgrid(x, y); 
+
+%evaluate the streamfunction at each point
+psi = psipv(xc, yc, Gamma, xm, ym); 
+
+c = -0.4:0.2:1.2;
+contour(xm, ym, psi, c);
+
+
+\end{lstlisting}
+
+\section{Reference vortex-sheet-panel stream function}
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 2/infa.eps}
+         \caption{Influence Factor A, $f_a$}
+         \label{fig:y equals x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 2/infb.eps}
+         \caption{Influence Factor B, $f_b$}
+         \label{fig:three sin x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 2/analytical_vortex_sheet_panel.eps}
+         \caption{Analytical Solution for vortex sheet panel\\ ($\gamma_a =0.5$,    $\gamma_b=1.5$)}
+         \label{fig:five over x}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 2/approx_vortex_sheet_panel.eps}
+         \caption{Approximate solution for vortex sheet panel using\\ point vortices ($\gamma_a =0.5$,    $\gamma_b=1.5$)}
+         \label{fig:five over x}
+     \end{subfigure}
+    \caption{Reference vortex sheet panel stream function plots}
+    \label{fig:three graphs}
+\end{figure}
+
+\begin{lstlisting}[language=Matlab, caption=Code for producing the stream function plot of a reference vortex sheet panel. (Exercise 2)]
+function [infa, infb] = refpainf(del, X, Yin)
+    if abs(Yin) <1e-6
+        Y = 1e-6;
+    else 
+        Y = Yin;
+    end 
+
+    I0 = (-1/(4*pi)) * (X*log(X^2+Y^2) - (X-del)*log((X-del)^2 + Y^2) -2*del + 2*Y*(atan(X/Y)-atan((X-del)/Y)));
+    I1 = (1/(8*pi))*((X^2+Y^2)*log(X^2+Y^2) - ((X-del)^2+Y^2)*log((X-del)^2+Y^2)-2*X*del+del^2);
+    infa = (1-(X/del))*I0 - I1/del;
+    infb = (X/del)*I0 + I1/del;
+end
+
+
+clear;
+close all;
+xmin = 0;
+xmax = 5;
+ymin = 0;
+ymax = 4;
+ny = 41;
+nx = 51;
+del = 1.5;
+gamma_a = 0.5;
+gamma_b = 1.5;
+nv=100;
+yc=0;
+psi_approx = zeros(nx, ny);
+infa = zeros(nx,ny) ;
+infb = zeros(nx, ny);
+xm = zeros(nx, ny);
+ym = zeros(nx, ny);
+psi_analy = zeros(nx,ny);
+xa = 3.5;
+ya = 2.5;
+xb = 1.6;
+yb = 1.1;
+
+
+for i = 1:nx
+    for j = 1:ny
+        xm(i,j) = xmin + (i-1)*(xmax-xmin)/(nx-1);
+        ym(i,j) = ymin + (j-1)*(ymax-ymin)/(ny-1);
+        [infa(i,j), infb(i,j)] = panelinf(xa, ya, xb, yb, xm(i,j), ym(i,j));
+        psi_analy(i,j) = gamma_a*infa(i,j) + gamma_b *infb(i,j);
+            
+    end
+end
+
+l=0;
+panel_length = norm([(xb-xa), (yb-ya)]);
+dl = panel_length/nv; 
+pl_vec = [(xb-xa), (yb-ya)]/norm([(xb-xa), (yb-ya)]);
+a = [xa,ya];
+b = [xb, yb];
+for n = 1:nv
+    centre = a + ((2*n-1)/2)*dl*pl_vec;
+    Gamma = (gamma_a*norm(b-centre)/panel_length + gamma_b*norm(centre-a)/panel_length)*dl;
+    for i = 1:nx
+        for j = 1:ny
+            psi_approx(i,j) = psi_approx(i,j) + psipv(centre(1), centre(2), Gamma, xm(i,j), ym(i,j));
+        end 
+    end
+end
+
+c = -0.15:0.05:0.15;
+
+contour(xm,ym,infa,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of influence coefficient a');
+
+figure(2);
+contour(xm,ym,infb,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of influence coefficient b');
+
+figure(3);
+contour(xm,ym,psi_analy,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of the analytical solution');
+
+figure(4);
+contour(xm,ym,psi_approx,c);
+xlabel('x');
+ylabel('y');
+title('Contour plot of discretised approximation');
+
+
+\end{lstlisting}
+
+\section{General vortex-sheet-panel stream function}
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 3/infa.eps}
+         \caption{Influence Factor A, $f_a$}
+         \label{fig:y equals x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 3/infb_ex3.png}
+         \caption{Influence Factor B, $f_b$}
+         \label{fig:three sin x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 3/analy_ex3.png}
+         \caption{Analytical Solution for vortex sheet panel\\ ($\gamma_a =0.5$,    $\gamma_b=1.5$)}
+         \label{fig:five over x}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week1/Exercise 3/disc_ex3.png}
+         \caption{Approximate solution for vortex sheet panel using\\ point vortices ($\gamma_a =0.5$,    $\gamma_b=1.5$)}
+         \label{fig:five over x}
+     \end{subfigure}
+    \caption{Reference vortex sheet panel stream function plots}
+    \label{fig:three graphs}
+\end{figure}
 
 \end{document}
