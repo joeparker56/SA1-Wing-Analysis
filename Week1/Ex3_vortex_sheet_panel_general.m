@@ -32,6 +32,8 @@ for i = 1:nx
             
     end
 end
+
+
 l=0;
 panel_length = norm([(xb-xa), (yb-ya)]);
 dl = panel_length/nv; 
