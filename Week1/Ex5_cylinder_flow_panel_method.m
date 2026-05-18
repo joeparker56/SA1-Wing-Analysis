@@ -42,9 +42,9 @@ end
 
 
 c = -1.75:0.25:1.75;
-circ =0;
+circ = 0;
 for i=1:np
-    circ = circ + gam(s)*2*pi/np;
+    circ = circ + gam(i)*2*pi/np;
 end
 
 contour(xm,ym,psi,c);
