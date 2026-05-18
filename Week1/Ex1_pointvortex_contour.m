@@ -16,3 +16,4 @@ psi = psipv(xc, yc, Gamma, xm, ym);
 
 c = -0.4:0.2:1.2;
 contour(xm, ym, psi, c);
+print -deps2c point_vortex_contour_ex1.eps;
