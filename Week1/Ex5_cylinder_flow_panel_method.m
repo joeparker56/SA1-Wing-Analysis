@@ -22,11 +22,11 @@ for i = 1:np+1
     ys(i) = sin(theta(i));
 end
 
-
+tic
 A = build_lhs(xs, ys);
 b = build_rhs(xs, ys, alpha);
 gam = A\b;
-
+toc
 
 for i = 1:nx
     for j = 1:ny
