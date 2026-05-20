@@ -6,10 +6,7 @@ ymax = 2;
 ny = 41;
 nx = 51;
 
-psi = zeros(nx, ny);
-psi_fs = zeros(nx,ny);
-xm = zeros(nx, ny);
-ym = zeros(nx, ny);
+
 alpha = pi/24;
 
 np = 100;
@@ -18,10 +15,11 @@ xs = cos(theta(1:np+1));
 ys = sin(theta(1:np+1));
 
 tic
-A = build_lhs_vec(xs, ys);
+A = build_lhs(xs, ys);
+toc
 b = build_rhs_vec(xs, ys, alpha);
 gam = A\b;
-toc
+
 
 
 x = linspace(xmin, xmax, nx);
