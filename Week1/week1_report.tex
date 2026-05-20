@@ -104,15 +104,19 @@ contour(xm, ym, psi, c);
 
 \begin{lstlisting}[language=Matlab, caption={Function for evaluating influence coefficients $f_a$, $f_b$ at an arbitrary point due to a reference vortex sheet which starts at $(0,0)$, has length $\Delta$ and is along the x-axis. (Exercise 2)}]
 function [infa, infb] = refpainf(del, X, Yin)
+    %avoid singularitys by imposing a minimum value on Y
     if abs(Yin) <1e-6
         Y = 1e-6;
     else 
         Y = Yin;
     end 
 
+    %evaluate the analytical solutions to the integrals
     I0 = (-1/(4*pi)) * (X*log(X^2+Y^2) - (X-del)*log((X-del)^2 + Y^2) -2*del + ...
         2*Y*(atan(X/Y)-atan((X-del)/Y)));
     I1 = (1/(8*pi))*((X^2+Y^2)*log(X^2+Y^2) - ((X-del)^2+Y^2)*log((X-del)^2+Y^2)-2*X*del+del^2);
+
+    %evaluate the influence coefficients 
     infa = (1-(X/del))*I0 - I1/del;
     infb = (X/del)*I0 + I1/del;
 end
@@ -129,8 +133,6 @@ ymax = 2;
 ny = 41;
 nx = 51;
 del = 1.5;
-gamma_a = 0.5;
-gamma_b = 1.5;
 nv=100;
 yc=0;
 psi_approx = zeros(nx, ny);
@@ -139,23 +141,46 @@ infb = zeros(nx, ny);
 xm = zeros(nx, ny);
 ym = zeros(nx, ny);
 psi_analy = zeros(nx,ny);
-
+infa_approx = zeros(nx,ny);
+infb_approx = zeros(nx,ny);
 
 for i = 1:nx
     for j = 1:ny
         xm(i,j) = xmin + (i-1)*(xmax-xmin)/(nx-1);
         ym(i,j) = ymin + (j-1)*(ymax-ymin)/(ny-1);
+
+        %evaluate the influence coefficients at each grid point
         [infa(i,j), infb(i,j)] = refpainf(del, xm(i,j), ym(i,j));
-        psi_analy(i,j) = gamma_a*infa(i,j) + gamma_b *infb(i,j);
-            
+        
+        %psi_analy(i,j) = gamma_a*infa(i,j) + gamma_b *infb(i,j);
+        %This was the analytical solution for specific values of gamma_a and gamma_b
     end
 end
+
+%Evaluate influence coefficient a
+%This was intially set up to calculate the stream function for specific values of gamma_a and gamma_b, so it has been adapted to extract approximate values of influence coefficients.
+
+gamma_a = 1;
+gamma_b = 0;
 for n = 1:nv
     xc = (2*n-1)*del/(2*nv);
     Gamma = (gamma_a*(del-xc)/del + gamma_b*xc/del)*del/nv;
     for i = 1:nx
         for j = 1:ny
-            psi_approx(i,j) = psi_approx(i,j) + psipv(xc, yc, Gamma, xm(i,j), ym(i,j));
+            infa_approx(i,j) = infa_approx(i,j) + psipv(xc, yc, Gamma, xm(i,j), ym(i,j));
+        end 
+    end
+end
+
+%Evaluate approximate influence coefficient b 
+gamma_a = 0;
+gamma_b = 1;
+for n = 1:nv
+    xc = (2*n-1)*del/(2*nv);
+    Gamma = (gamma_a*(del-xc)/del + gamma_b*xc/del)*del/nv;
+    for i = 1:nx
+        for j = 1:ny
+            infb_approx(i,j) = infb_approx(i,j) + psipv(xc, yc, Gamma, xm(i,j), ym(i,j));
         end 
     end
 end
@@ -166,25 +191,29 @@ contour(xm,ym,infa,c);
 xlabel('x');
 ylabel('y');
 title('Contour plot of influence coefficient a');
+print -deps2c infa_ex2.eps;
 
 figure(2);
 contour(xm,ym,infb,c);
 xlabel('x');
 ylabel('y');
 title('Contour plot of influence coefficient b');
+print -deps2c infb_ex2.eps;
 
 figure(3);
-contour(xm,ym,psi_analy,c);
+contour(xm,ym,infa_approx,c);
 xlabel('x');
 ylabel('y');
-title('Contour plot of the analytical solution');
+title('Contour plot of approximate influence coefficient a');
+print -deps2c infa_approx_ex2.eps;
+
 
 figure(4);
-contour(xm,ym,psi_approx,c);
+contour(xm,ym,infb_approx,c);
 xlabel('x');
 ylabel('y');
-title('Contour plot of discretised approximation');
-
+title('Contour plot of approximate influence coefficient b');
+print -deps2c infb_approx_ex2.eps;
 \end{lstlisting}
 
 \newpage
@@ -569,5 +598,180 @@ print -deps2c sur_vel_alpha_pi24.eps;
 \end{lstlisting}
 
 
+\newpage
 
+\appendix
+
+\section{Vectorised Functions}
+
+\subsection{Reference vortex-sheet-panel}
+
+\begin{lstlisting}[language=Matlab, caption=Vectorised code for calculating influence coefficients from a reference vortex sheet panel.]
+function [infa, infb] = refpainf_vec(del, X, Yin)
+    Y = Yin;
+    Y(abs(Yin) < 1e-6) = 1e-6;
+    
+    I0 = (-1/(4*pi)) .* (X.*log(X.^2+Y.^2) - (X-del).*log((X-del).^2 + Y.^2) - 2*del + 2*Y.*(atan(X./Y)-atan((X-del)./Y)));
+    I1 = (1/(8*pi)).*((X.^2+Y.^2).*log(X.^2+Y.^2) - ((X-del).^2+Y.^2).*log((X-del).^2+Y.^2) - 2*X*del + del^2);
+    
+    infa = (1-(X/del)).*I0 - I1/del;
+    infb = (X/del).*I0 + I1/del;
+end
+\end{lstlisting}
+
+\subsection{General vortex-sheet-panel}
+
+\begin{lstlisting}[language=Matlab, caption=Vectorised code for calculating influence coefficients from a general vortex sheet panel.]
+function [infa, infb] = panelinf_vec(xa, ya, xb, yb, x, y)
+    del = norm([xb-xa, yb-ya]);
+    tx = (xb-xa)/del;
+    ty = (yb-ya)/del;
+    nx_ = (yb-ya)/del;
+    ny_ = -(xb-xa)/del;
+    
+    X = (x-xa)*tx + (y-ya)*ty;  %to find X for all x as x is a vector now, so we cant use the dot() function as we need to compute them element wise
+    Y = (x-xa)*nx_ + (y-ya)*ny_;
+    
+    [infa, infb] = refpainf_vec(del, X, Y);
+end
+\end{lstlisting}
+
+\subsection{Panel method solver}
+
+\begin{lstlisting}[language=Matlab, caption=Function for calculating the $\mathbf{A}$ matrix. ]
+function lhsmat = build_lhs_vec(xs, ys)
+    np = length(xs)-1;
+    psip = zeros(np, np+1);
+    infa = zeros(np, np+1);
+    infb = zeros(np, np+1);
+
+    
+    [infa(1:np,1), infb(1:np,1)] = panelinf_vec(xs(1), ys(1), xs(2), ys(2), xs(1:np), ys(1:np));
+    psip(1:np, 1) = infa(1:np,1);
+    
+    for j=2:np % main loop to generate psip matrix
+        [infa(1:np, j), infb(1:np,j)] = panelinf_vec(xs(j), ys(j), xs(j+1), ys(j+1), xs(1:np), ys(1:np));
+        psip(1:np,j) = infa(1:np,j) + infb(1:np,j-1);
+    end
+
+    %special case for j = np+1
+    psip(1:np,np+1) = infb(1:np,j-1);
+    lhsmat = zeros(np+1, np+1);
+    lhsmat(1:np-1, :) = psip(2:np,:)-psip(1:np-1,:);
+
+    %set up the equation that gamma_np+1 = gamma_1
+    lhsmat(np, 1) = 1;
+    lhsmat(np, np+1) = -1;
+
+    %set up the equation that gamma_1 = 0
+    lhsmat(np+1,1)=1;
+
+end
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=Matlab, caption=Function for calculating the $\mathbf{b}$ vector for panel methods.]
+function rhsvec = build_rhs_vec(xs,ys, alpha)
+    np = length(xs)-1; 
+    rhsvec = zeros(np+1, 1); %column vector b 
+    psi_fs = zeros(np,1);
+
+   
+    psi_fs(1:np,1) = ys(1:np)*cos(alpha) - xs(1:np)*sin(alpha); %free stream streamfunction
+    
+    rhsvec(1:np-1,1) = psi_fs(1:np-1,1)-psi_fs(2:np,1);
+    
+    rhsvec(np,1)=0;
+    rhsvec(np+1,1)=0;
+    %keep b(np) and b(np+1)=0 such that gamma_0=1 and gamma_0 = gamma_np+1
+end
+\end{lstlisting}
+\subsection{Vectorised exercise scripts}
+For the sake of clarity, only the key parts of the script have been kept. All definition of variables and plotting aspects of the script are identical to the non-vectorised forms. 
+
+
+\begin{lstlisting}[language=Matlab, caption=Vectorised exercise 2 script.]
+x = linspace(xmin, xmax, nx);
+y = linspace(ymin, ymax, ny);
+[xm, ym] = meshgrid(x, y);
+
+[infa, infb] = refpainf_vec(del, xm, ym);
+psi_analy = gamma_a*infa + gamma_b*infb;
+
+psi_approx = zeros(size(xm));
+   
+for n = 1:nv
+    xc = (2*n-1)*del/(2*nv);
+    Gamma = (gamma_a*(del-xc)/del + gamma_b*xc/del)*del/nv;
+    psi_approx = psi_approx + psipv(xc, yc, Gamma, xm, ym);
+end
+\end{lstlisting}
+
+\begin{lstlisting}[language=Matlab, caption=Vectorised exercise 3 script.]
+x = linspace(xmin, xmax, nx);
+y = linspace(ymin, ymax, ny);
+[xm, ym] = meshgrid(x, y);
+
+[infa, infb] = panelinf_vec(xa, ya, xb, yb, xm, ym);
+psi_analy = gamma_a*infa + gamma_b*infb;
+
+psi_approx = zeros(size(xm));
+
+panel_length = norm([xb-xa, yb-ya]);
+dl = panel_length/nv;
+pl_vec = [xb-xa, yb-ya]/panel_length;
+a = [xa, ya];
+b = [xb, yb];
+
+for n = 1:nv
+    centre = a + ((2*n-1)/2)*dl*pl_vec;
+    Gamma = (gamma_a*norm(b-centre)/panel_length + gamma_b*norm(centre-a)/panel_length)*dl;
+    psi_approx = psi_approx + psipv(centre(1), centre(2), Gamma, xm, ym);
+end
+\end{lstlisting}
+
+\begin{lstlisting}[language=Matlab, caption=Vectorised exercise 4 script.]
+np = 100;
+theta = (0:np)*2*pi/np;
+xs = cos(theta);
+ys = sin(theta);
+gamma_panel_ends = -2*sin(theta);
+
+x = linspace(xmin, xmax, nx);
+y = linspace(ymin, ymax, ny);
+[xm, ym] = meshgrid(x, y);
+
+psi = ym;
+
+for s = 1:np
+    [infa, infb] = panelinf_vec(xs(s), ys(s), xs(s+1), ys(s+1), xm, ym);
+    psi = psi + gamma_panel_ends(s)*infa + gamma_panel_ends(s+1)*infb;
+end
+\end{lstlisting}
+
+
+
+\begin{lstlisting}[language=Matlab, caption=Vectorised exercise 5 script.]
+theta = (0:np)*2*pi/np;
+xs = cos(theta(1:np+1));
+ys = sin(theta(1:np+1));
+
+
+A = build_lhs_vec(xs, ys);
+b = build_rhs_vec(xs, ys, alpha);
+gam = A\b;
+
+
+
+x = linspace(xmin, xmax, nx);
+y = linspace(ymin, ymax, ny);
+[xm, ym] = meshgrid(x, y);
+
+psi =  ym*cos(alpha) - xm*sin(alpha);
+for s = 1:np
+    [infa, infb] = panelinf_vec(xs(s), ys(s), xs(s+1), ys(s+1), xm, ym);
+    psi = psi + gam(s)*infa + gam(s+1)*infb;
+end
+
+\end{lstlisting}
 \end{document}
