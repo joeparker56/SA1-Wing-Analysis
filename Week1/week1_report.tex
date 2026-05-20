@@ -40,7 +40,7 @@
 \end{figure}
 \begin{lstlisting}[language=Matlab, caption=The function to evaluate the stream function due to a point vortex at an arbitrary point. (Exercise 1)]
 function psixy = psipv(xc, yc, Gamma, x, y)
-    %x and y can be matricies 
+    %x and y can be matrices 
     %find the elementwise squared distance
     r_2 = (x-xc).^2 + (y-yc).^2; 
     %evaluate the streamfunction elementwise
@@ -98,13 +98,13 @@ contour(xm, ym, psi, c);
          \caption{Approximate Influence Factor B, $f_b$}
          \label{fig:five over x}
      \end{subfigure}
-    \caption{Reference vortex sheet panel stream function plots.}
+    \caption{Reference vortex-sheet-panel stream function plots.}
     \label{fig:three graphs}
 \end{figure}
 
 \begin{lstlisting}[language=Matlab, caption={Function for evaluating influence coefficients $f_a$, $f_b$ at an arbitrary point due to a reference vortex sheet which starts at $(0,0)$, has length $\Delta$ and is along the x-axis. (Exercise 2)}]
 function [infa, infb] = refpainf(del, X, Yin)
-    %avoid singularitys by imposing a minimum value on Y
+    %avoid singularities by imposing a minimum value on Y
     if abs(Yin) <1e-6
         Y = 1e-6;
     else 
@@ -158,7 +158,7 @@ for i = 1:nx
 end
 
 %Evaluate influence coefficient a
-%This was intially set up to calculate the stream function for specific values of gamma_a and gamma_b, so it has been adapted to extract approximate values of influence coefficients.
+%This was initially set up to calculate the stream function for specific values of gamma_a and gamma_b, so it has been adapted to extract approximate values of influence coefficients.
 
 gamma_a = 1;
 gamma_b = 0;
@@ -310,8 +310,8 @@ gamma_b = 0;
 
 %evaluate approximate influence coefficient a using 100 point vorticies 
 for n = 1:nv
-    %this code is designed to evaluate arbitrary values of gamma_a and
-    %gamma_b but has been adapted to just evaluate influence a and
+    %this code is designed to evaluate the stream function for arbitrary values of gamma_a and
+    %gamma_b but has been adapted to only evaluate influence a and
     %influence b
     centre = a + ((2*n-1)/2)*dl*pl_vec;
     Gamma = (gamma_a*norm(b-centre)/panel_length + gamma_b*norm(centre-a)/panel_length)*dl; %the interpolation of the two gammas to find an estimate of the point vortex size
@@ -374,7 +374,7 @@ print -deps2c infb_approx_ex3.eps;
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{Week1/Exercise 4/cylinder_flow_ex_4.eps}
-    \caption{Streamlines around a cylinder (Exercise 4)}
+    \caption{Streamlines around a cylinder. (Exercise 4)}
     \label{fig:placeholder}
 \end{figure}
 
@@ -394,7 +394,7 @@ ym = zeros(nx, ny);
 
 np = 100;
 
-%initalise the angles which will be used
+%initialise the angles which will be used
 theta = (0:np)*2*pi/np;
 
 %establish the coordinates for the cylinder
@@ -436,7 +436,7 @@ print -deps2c cylinder_flow_ex_4.eps;
 \newpage
 \section{Panel method solution for the cylinder flow}
 
-When $\alpha = \frac{\pi}{24}$ then the circulation is $\Gamma = -1.6411$.
+When $\alpha = \frac{\pi}{24}$, the circulation is $\Gamma = -1.6411$.
 
 \begin{figure}[h]
      \centering
@@ -457,16 +457,16 @@ When $\alpha = \frac{\pi}{24}$ then the circulation is $\Gamma = -1.6411$.
      \begin{subfigure}[b]{0.49\textwidth}
          \centering
          \includegraphics[width=\textwidth]{Week1/Exercise 5/sur_vel_alpha_pi24.eps}
-         \caption{Surface velocity against angle for $\alpha = \pi/24$}
+         \caption{Surface velocity against angle around the cylinder for $\alpha = \pi/24$}
          \label{fig:five over x}
      \end{subfigure}
      \begin{subfigure}[b]{0.49\textwidth}
          \centering
          \includegraphics[width=\textwidth]{Week1/Exercise 5/sur_vel_alpha_0.eps}
-         \caption{Surface velocity against angle for $\alpha = 0$}
+         \caption{Surface velocity against angle around the cylinder for \\$\alpha = 0$}
          \label{fig:five over x}
      \end{subfigure}
-    \caption{Cylinder flow solved using panel methods}
+    \caption{Cylinder flow solved using panel methods.}
     \label{fig:three graphs}
 \end{figure}
 
@@ -612,10 +612,10 @@ function [infa, infb] = refpainf_vec(del, X, Yin)
     Y(abs(Yin) < 1e-6) = 1e-6;
     
     I0 = (-1/(4*pi)) .* (X.*log(X.^2+Y.^2) - (X-del).*log((X-del).^2 + Y.^2) - 2*del + 2*Y.*(atan(X./Y)-atan((X-del)./Y)));
-    I1 = (1/(8*pi)).*((X.^2+Y.^2).*log(X.^2+Y.^2) - ((X-del).^2+Y.^2).*log((X-del).^2+Y.^2) - 2*X*del + del^2);
+    I1 = (1/(8*pi)).*((X.^2+Y.^2).*log(X.^2+Y.^2) - ((X-del).^2+Y.^2).*log((X-del).^2+Y.^2) - 2*X.*del + del.^2);
     
-    infa = (1-(X/del)).*I0 - I1/del;
-    infb = (X/del).*I0 + I1/del;
+    infa = (1-(X./del)).*I0 - I1./del;
+    infb = (X./del).*I0 + I1./del;
 end
 \end{lstlisting}
 
@@ -623,46 +623,66 @@ end
 
 \begin{lstlisting}[language=Matlab, caption=Vectorised code for calculating influence coefficients from a general vortex sheet panel.]
 function [infa, infb] = panelinf_vec(xa, ya, xb, yb, x, y)
-    del = norm([xb-xa, yb-ya]);
-    tx = (xb-xa)/del;
-    ty = (yb-ya)/del;
-    nx_ = (yb-ya)/del;
-    ny_ = -(xb-xa)/del;
-    
-    X = (x-xa)*tx + (y-ya)*ty;  %to find X for all x as x is a vector now, so we cant use the dot() function as we need to compute them element wise
-    Y = (x-xa)*nx_ + (y-ya)*ny_;
-    
+    %Evaluate del elementwise for each vortex sheet panel.
+    %Note for a cylinder, we could use the same value of del all the way round, but assuming this function will be used for various geometries in future, we will not make this assumption here.
+    del = sqrt((xb-xa).^2 + (yb-ya).^2); 
+
+    %Evaluate the x and y components of the tangential and normal unit vectors.
+    tx = (xb-xa)./del;
+    ty = (yb-ya)./del;
+    nx_ = (yb-ya)./del;
+    ny_ = -(xb-xa)./del;
+
+    %Evaluate the tangential and perpendicular components of the point compared to the position of the vortex-sheet
+    X = (x-xa).*tx + (y-ya).*ty;  %to find X for all x as x is a vector now, so we can't use the dot() function as we need to compute them element-wise
+    Y = (x-xa).*nx_ + (y-ya).*ny_;
     [infa, infb] = refpainf_vec(del, X, Y);
 end
 \end{lstlisting}
 
 \subsection{Panel method solver}
 
-\begin{lstlisting}[language=Matlab, caption=Function for calculating the $\mathbf{A}$ matrix. ]
-function lhsmat = build_lhs_vec(xs, ys)
+\begin{lstlisting}[language=Matlab, caption={Vectorised function for calculating the $\mathbf{A}$ matrix. This improved version takes 0.00998s to run, whereas the original function takes 0.04498s to run, an almost five-fold improvement.} ]
+function lhsmat = build_lhs_fully_vec(xs, ys)
     np = length(xs)-1;
+    
+    %XA are the starting points of our vortex-sheet-panels
+    %X_eval are the points at which we will evaluate the streamfunction
+    %However, we will evaluate the stream function at every starting point
+    %of our sheet panels, so we create two matrices with pairs of both at each
+    %index.
+    [XA, X_eval] = meshgrid(xs(1:np), xs(1:np)');
+    [YA, Y_eval] = meshgrid(ys(1:np), ys(1:np)');
+    
+    %These are the end points of each vortex-sheet-panel. Each index of the
+    %endpoints corresponds to the start point for the same panel, so we can
+    %use element-wise calculations.
+    [XB,~] = meshgrid(xs(2:np+1), xs(1:np)');
+    [YB, ~] = meshgrid(ys(2:np+1), ys(1:np)');
+    
+    %Create a matrix of the influence coefficients. 
+    %The row of the matrix corresponds to the point on which it is acting.
+    %The column of the matrix corresponds to the sheet panel from which it
+    %comes from. 
+
+    [infa, infb] = panelinf_vec(XA, YA, XB, YB, X_eval, Y_eval);
+
+    %Here will fill in the psip matrix based on the influence coefficients
+    %at each point.
     psip = zeros(np, np+1);
-    infa = zeros(np, np+1);
-    infb = zeros(np, np+1);
-
+    psip(:,1) = infa(:,1);
+    psip(:,2:np) = infa(:,2:np) + infb(:,1:np-1);
+    psip(:, np+1) = infb(:,np);
     
-    [infa(1:np,1), infb(1:np,1)] = panelinf_vec(xs(1), ys(1), xs(2), ys(2), xs(1:np), ys(1:np));
-    psip(1:np, 1) = infa(1:np,1);
-    
-    for j=2:np % main loop to generate psip matrix
-        [infa(1:np, j), infb(1:np,j)] = panelinf_vec(xs(j), ys(j), xs(j+1), ys(j+1), xs(1:np), ys(1:np));
-        psip(1:np,j) = infa(1:np,j) + infb(1:np,j-1);
-    end
-
-    %special case for j = np+1
-    psip(1:np,np+1) = infb(1:np,j-1);
+    %We set up the A matrix by finding the difference between the i+1th and
+    %ith item in the psip matrix
     lhsmat = zeros(np+1, np+1);
     lhsmat(1:np-1, :) = psip(2:np,:)-psip(1:np-1,:);
 
     %set up the equation that gamma_np+1 = gamma_1
     lhsmat(np, 1) = 1;
     lhsmat(np, np+1) = -1;
-
+    
     %set up the equation that gamma_1 = 0
     lhsmat(np+1,1)=1;
 
@@ -687,7 +707,7 @@ function rhsvec = build_rhs_vec(xs,ys, alpha)
 end
 \end{lstlisting}
 \subsection{Vectorised exercise scripts}
-For the sake of clarity, only the key parts of the script have been kept. All definition of variables and plotting aspects of the script are identical to the non-vectorised forms. 
+For the sake of clarity, only the key parts of the script have been kept. All definitions of variables and plotting aspects of the script are identical to the non-vectorised scripts. 
 
 
 \begin{lstlisting}[language=Matlab, caption=Vectorised exercise 2 script.]
