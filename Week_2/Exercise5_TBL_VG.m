@@ -5,7 +5,7 @@ close all;
 global re_l dudx u0
 
 re_l = 1e7;
-dudx =  -0;
+dudx =  -0.25;
 u0 = 1;
 
 function dthickdx = thickdash(xmx0, thick)
@@ -15,7 +15,7 @@ function dthickdx = thickdash(xmx0, thick)
     if He>=1.46
         H =(11*He + 15)/(48*He-59);
     else
-        H = 2.803;
+        H = 2.803;        
     end 
     ue = u0 + dudx*xmx0;
     re_thet = re_l * ue * thick(1);
@@ -31,14 +31,34 @@ thick0(2) = 1.83*thick0(1);
 
 [delx, thickhist] =ode45(@thickdash, [0, 0.99], thick0);
 
-theta7 = 0.037*delx.*(re_l.*(delx+x0)).^(-1/5);
-theta9 = 0.023*delx.*(re_l.*(delx+x0)).^(-1/6);
+x=x0+delx;
+
+all_He = thickhist(:,2) ./ thickhist(:,1);
+
+sep_location=[];
+
+for i = 1:length(all_He)
+    if all_He(i) < 1.46 && isempty(sep_location)
+        sep_location = i;
+    end
+end
+
+if ~isempty(sep_location)
+    disp(['Separation at x/L = ', num2str(x(sep_location), '%.4f')]);
+else
+    disp('No separation before x/L = 1');
+end
 
 figure;
-plot(delx+x0, thickhist(:,1))
+plot(x, thickhist(:,1), 'DisplayName', '\theta/L')
 hold on;
-plot(delx+x0, theta7)
-hold off;
-hold on;
-plot(delx+x0, theta9)
-hold off;
+plot(x,thickhist(:,2), 'DisplayName', '\delta_e/L' )
+xlabel('x/L'); ylabel('\theta/L,  \delta_E/L');
+legend;
+
+figure;
+plot(x, all_He);
+xlabel('x/L'); ylabel('He');
+
+yline(1.46, '--','Separation threshold');
+
