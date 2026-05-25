@@ -24,6 +24,5 @@ hold off;
 xlabel('x/L');
 ylabel('\theta/L');
 legend('Computed \theta', 'Blausius Solution');
-title('Comparison of Computed and Analytical Theta');
 grid on;
 print -deps2c Week_2/Exercise1.eps;
