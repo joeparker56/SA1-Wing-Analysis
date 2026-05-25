@@ -42,3 +42,8 @@ hold off;
 hold on;
 plot(delx+x0, theta9)
 hold off;
+legend({'Integral Eq Solution', '1/7th Power Law', '1/9th Power Law'},'Location','northwest');
+xlabel('x/L')
+ylabel('\theta/L')
+print -deps2c Week_2/Exercise4.eps;
+
