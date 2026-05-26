@@ -1,10 +1,12 @@
 clear;
 close all;
 
+global re_l dudx u0
+
 np = 101;
 
 x = linspace(0,1,np); %length varies from 0->1
-dudx = -0.25; %dimensionless gradient
+dudx = -0.5; %dimensionless gradient
 re_l = 1e5;
 
 theta = zeros(1,np);  %theta squared at each position
@@ -43,6 +45,7 @@ delta_e = Hes(i)*theta(i);
 while its == 0 && i<np %loop for turbulent boundary layer
     i=i+1;
     thick0 = [theta(i-1), delta_e];
+    u0 = u_(i-1); %velocity at start of panle
     [delx, thickhist] = ode45(@thickdash, [0, x(i)-x(i-1)], thick0);
     theta(i) = thickhist(end, 1);
     delta_e = thickhist(end, 2);
@@ -60,9 +63,11 @@ if Hes(i)>=1.46
 else
     H = 2.803;        
 end 
+if its ~= 0
+    Hes(i+1:np) = Hes(i);
+    theta(i+1:np) = theta(i).*(u_(i)./u_(i+1:np)).^(H+2);
+end
 
-Hes(i+1:np) = Hes(i);
-theta(i+1:np) = theta(i).*(u_(i)./u_(i+1:np)).^(H+2);
 
 disp(['re_l = ' num2str(re_l) ', dudx = ' num2str(dudx)])
 if int ~= 0
@@ -87,7 +92,6 @@ figure;
 plot(x, theta);
 xlabel('x/L');
 ylabel('\theta/L');
-legend({'Re = 1e7'}, 'Location','northwest')
 if int ~= 0
     xline(x(int), '-', 'Laminar Transition')
 end
@@ -105,7 +109,6 @@ figure;
 plot(x, Hes);
 xlabel('x/L');
 ylabel('He')
-legend({'Re = 1e7'}, 'Location','northwest')
 if int ~= 0
     xline(x(int), '-', 'Laminar Transition')
 end
