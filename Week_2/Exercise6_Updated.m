@@ -11,8 +11,8 @@ re_l = 1e7;
 
 figure(1);
 hold on;
-p1 = plot(x, theta1, 'b-', 'LineWidth', 1.5, 'DisplayName', 'Re = 1e6');
-p2 = plot(x, theta2, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Re = 1e7');
+p1 = plot(x, theta1, 'b-', 'LineWidth', 1.5, 'DisplayName', 'Re = 10^6');
+p2 = plot(x, theta2, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Re = 10^7');
 add_bl_labels(x, theta1, int1, ils1, itr1, its1, 'b');
 add_bl_labels(x, theta2, int2, ils2, itr2, its2, 'r');
 
@@ -20,21 +20,25 @@ hold off;
 
 xlabel('x/L');
 ylabel('\theta/L');
-legend([p1, p2], 'Location', 'best');
+lgd = legend([p1, p2], 'Location', 'best');
+lgd.FontSize = 14;
+lgd.Location = "northwest";
 grid on;
 print -deps2c Week_2/Exercise6a.eps;
 
 figure(2);
 hold on;
-p1 = plot(x, hes1, 'b-',  'LineWidth', 1.5, 'DisplayName', 'Re = 1e6');
-p2 = plot(x, hes2, 'r-',  'LineWidth', 1.5, 'DisplayName', 'Re = 1e7');
+p1 = plot(x, hes1, 'b-',  'LineWidth', 1.5, 'DisplayName', 'Re = 10^6');
+p2 = plot(x, hes2, 'r-',  'LineWidth', 1.5, 'DisplayName', 'Re = 10^7');
 add_bl_labels(x, hes1, int1, ils1, itr1, its1, 'b');
 add_bl_labels(x, hes2, int2, ils2, itr2, its2, 'r');
 hold off;
 
 xlabel('x/L');
 ylabel('He');
-legend([p1, p2], 'Location', 'best');
+lgd = legend([p1, p2], 'Location', 'best');
+lgd.FontSize = 14;
+lgd.Location = "northwest";
 grid on;
 print -deps2c Week_2/Exercise6b.eps;
 
@@ -53,9 +57,9 @@ re_l=1e6;
 
 figure(3);
 hold on;
-p1 = plot(x, theta1, 'b-', 'LineWidth', 1.5, 'DisplayName', 'Re = 1e4');
-p2 = plot(x, theta2, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Re = 1e5');
-p3 = plot(x, theta3, 'g-', 'LineWidth', 1.5, 'DisplayName', 'Re = 1e6');
+p1 = plot(x, theta1, 'b-', 'LineWidth', 1.5, 'DisplayName', 'Re = 10^4');
+p2 = plot(x, theta2, 'r-', 'LineWidth', 1.5, 'DisplayName', 'Re = 10^5');
+p3 = plot(x, theta3, 'g-', 'LineWidth', 1.5, 'DisplayName', 'Re = 10^6');
 add_bl_labels(x, theta1, int1, ils1, itr1, its1, 'b');
 add_bl_labels(x, theta2, int2, ils2, itr2, its2, 'r');
 add_bl_labels(x, theta3, int3, ils3, itr3, its3, 'g');
@@ -65,16 +69,16 @@ hold off;
 
 xlabel('x/L');
 ylabel('\theta/L');
-legend([p1, p2,p3], 'Location', 'best');
+lgd = legend([p1, p2,p3], 'Location', 'best');
+lgd.FontSize = 14;
 grid on;
 print -deps2c Week_2/Exercise6c.eps;
 
 figure(4);
 hold on;
-p1 = plot(x, hes1, 'b-',  'LineWidth', 1.5, 'DisplayName', 'Re = 1e4');
-p2 = plot(x, hes2, 'r-',  'LineWidth', 1.5, 'DisplayName', 'Re = 1e5');
-p3 = plot(x, hes3, ['g' ...
-    '-'],  'LineWidth', 1.5, 'DisplayName', 'Re = 1e6');
+p1 = plot(x, hes1, 'b-',  'LineWidth', 1.5, 'DisplayName', 'Re = 10^4');
+p2 = plot(x, hes2, 'r-',  'LineWidth', 1.5, 'DisplayName', 'Re = 10^5');
+p3 = plot(x, hes3, 'g-',  'LineWidth', 1.5, 'DisplayName', 'Re = 10^6');
 
 add_bl_labels(x, hes1, int1, ils1, itr1, its1, 'b');
 add_bl_labels(x, hes2, int2, ils2, itr2, its2, 'r');
@@ -84,7 +88,8 @@ hold off;
 
 xlabel('x/L');
 ylabel('He');
-legend([p1, p2,p3], 'Location', 'best');
+lgd = legend([p1, p2,p3], 'Location', 'best');
+lgd.FontSize = 14;
 grid on;
 print -deps2c Week_2/Exercise6d.eps;
 
