@@ -9,12 +9,14 @@ dudx = 0; %dimensionless gradient
 integ = 0; % value of the integral 
 theta_2 = zeros(1,np);  %theta squared at each position
 re_ls=linspace(1e5,1e6,10000); %searching for transition
-dudxs = [-0.25];
+re_ls=[5e6,10e6,20e6];
+dudxs = [-0.1,0,0.1];
 found = false;
-for n=1:length(re_ls)
-    if found
-        break
-    end
+%for n=1:length(re_ls)
+ %   if found
+  %      break
+   % end
+for n = 1:3
     for k=1
         re_l = re_ls(n);
         dudx = dudxs(k);
@@ -38,17 +40,18 @@ for n=1:length(re_ls)
 
             elseif m>= 0.09
                 laminar = false;
+                ils = i;
 
             end            
         end
         if int ~= 0
             found =true;
             disp(['re_l = ' num2str(re_l) ', dudx = ' num2str(dudx)])
-            disp([num2str(re_ls(n-1)) ', ' num2str(re_l) ', ' num2str(re_l) ', ' num2str(re_ls(n+1))])        %surrounding reynolds numbers to check we have enough sig figs
+            %disp([num2str(re_ls(n-1)) ', ' num2str(re_l) ', ' num2str(re_l) ', ' num2str(re_ls(n+1))])        %surrounding reynolds numbers to check we have enough sig figs
             disp(['Natural transition at x = ' num2str(x(int)) ', Rethet/1000 = ' num2str(re_l * u_(int) * sqrt(theta_2(int)) / 1000)])
         elseif ils ~= 0
             disp(['re_l = ' num2str(re_l) ', dudx = ' num2str(dudx)])
-            disp([num2str(re_ls(n-1)) ', ' num2str(re_l) ', ' num2str(re_l) ', ' num2str(re_ls(n+1))])        
+            %disp([num2str(re_ls(n-1)) ', ' num2str(re_l) ', ' num2str(re_l) ', ' num2str(re_ls(n+1))])        
 
             disp(['Separation at x = ' num2str(x(ils)) ', Rethet/1000 = ' num2str(re_l * u_(ils) * sqrt(theta_2(ils)) / 1000)])
         else
