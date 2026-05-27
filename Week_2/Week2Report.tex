@@ -11,6 +11,8 @@
 \usepackage{upquote}
 \usepackage{diagbox}
 \usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
 \lstset{
     basicstyle=\ttfamily\small,
     keywordstyle=\color{blue}\bfseries,
@@ -392,39 +394,53 @@ yline(1.46, '--','Separation threshold');
 
 \newpage
 \section{Combined laminar and turbulent boundary layer evolution}
-\begin{figure}[h]
-     \centering
-     \begin{subfigure}[b]{0.49\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2}
-         \caption{Influence Factor A, $f_a$}
-         \label{fig:y equals x}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.49\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week1/Exercise 3/infb_ex3.eps}
-         \caption{Influence Factor B, $f_b$}
-         \label{fig:three sin x}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.49\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week1/Exercise 3/infa_approx_ex3.eps}
-         \caption{Approximate Influence Factor A, $f_a$}
-         \label{fig:five over x}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.49\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week1/Exercise 3/infb_approx_ex3.eps}
-         \caption{Approximate Influence Factor B, $f_b$}
-         \label{fig:five over x}
-     \end{subfigure}
-    \caption{General vortex-sheet-panel stream function plots.}
-    \label{fig:three graphs}
+To achieve turbulent separation at $x/L=1$ with $Re_L = \num{1e5}$, it requires a velocity gradient of $du/dx = -0.383$.
+
+\begin{figure}[htbp] % 'htbp' tells LaTeX to place it Here, Top, Bottom, or Page
+    \centering % This centers the diagram, giving it equal space on the sides
+    
+    % Optional: Add some vertical space before the diagram
+    \vspace{1cm}
+    \begin{tikzpicture}[
+        % Define styles for the boxes and arrows
+        box/.style = {draw, rectangle, minimum width=2.5cm, minimum height=1.2cm, align=center, font=\sffamily},
+        arrow/.style = {-{Stealth[length=3mm]}, thick},
+        label_text/.style = {font=\small, align=center}    
+        ]
+    
+    % -------------------------
+    % 1. Position the Nodes
+    % ------------------------
+    \node[box] (lam) {Laminar \\ BL};
+    \node[box, right=4.5cm of lam] (turb) {Turbulent \\ BL};
+    \node[box, right=4cm of turb] (sepFlow) {Separated \\ Flow};
+    \node[box, below right=1.3cm and 1.1cm of lam] (sepBub) {Separation \\ Bubble};
+    
+    % -------------------------
+    % 2. Draw Edges and Labels
+    % -------------------------
+    % Laminar to Turbulent
+    \draw[arrow] (lam.east) -- node[above, label_text] {\textbf{Laminar Transition} \\ $\log(Re_{\theta}) \geq 18.4 H_e - 21.74$} (turb.west);
+    
+    % Laminar to Separation Bubble
+    \draw[arrow] (lam.south) to[out=270, in=180] node[below left, label_text] {\textbf{Laminar Separation} \\$m \geq 0.09$} (sepBub.west);
+    
+    % Separation Bubble to Turbulent
+    \draw[arrow] (sepBub.east) to[out=0, in=270] node[right, label_text, xshift=0.3cm] {\textbf{Turbulent Reattachment} \\ $H_{E} \geq 1.58$} (turb.south);
+    
+    % Turbulent to Separated Flow
+    \draw[arrow] (turb.east) -- node[above, label_text] {\textbf{Turbulent Separation} \\$H_E \leq 1.46$} (sepFlow.west);
+    \end{tikzpicture}
+    \vspace{0.5cm} 
+    
+    % Add your caption here
+    \caption{Flowchart describing the evolution of the boundary layer and the conditions for transitioning between regimes.}
+    \label{fig:bl_transition} % Useful if you need to reference this figure in your text
+
 \end{figure}
 
-\begin{lstlisting}[language=Matlab, caption={}]
+
+\begin{lstlisting}[language=Matlab, caption={Script for plotting the boundary layer thickness and shape factor for varying Reynolds numbers and velocity gradients. (Exercise 6)}]
 clear;
 close all;
 
@@ -552,4 +568,68 @@ if its ~= 0
 end
 
 \end{lstlisting}
+
+
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0_thet.eps}
+         \caption{Momentum thickness for $Re_L = \num{1e6}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0_He.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e6}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e7_0_thet.eps}
+         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e7}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e7_0_He.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e7}$}         \label{fig:five over x}
+     \end{subfigure}
+    \caption{Plots of momentum thickness and energy shape factor against distance for zero-pressure-gradient, and two values of Reynolds number. (Exercise 6)}
+\end{figure}
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e4_0.25_thet.eps}
+         \caption{Momentum thickness for $Re_L = \num{1e4}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e4_0.25_He.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e4}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e5_0.25_thet.eps}
+         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e5}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e5_0.25_He.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e5}$}         \label{fig:five over x}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0.25_thet.eps}
+         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e6}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0.25_He.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e6}$}         \label{fig:five over x}
+     \end{subfigure}
+    \caption{Plots of momentum thickness and energy shape factor against distance for $du/dx = -0.25$, and three values of Reynolds number. (Exercise 6)}
+\end{figure}
+
+
 \end{document}
