@@ -400,7 +400,7 @@ To achieve turbulent separation at $x/L=1$ with $Re_L = \num{1e5}$, it requires 
     \centering % This centers the diagram, giving it equal space on the sides
     
     % Optional: Add some vertical space before the diagram
-    \vspace{2cm}
+    \vspace{1cm}
     \begin{tikzpicture}[
         % Define styles for the boxes and arrows
         box/.style = {draw, rectangle, minimum width=2.5cm, minimum height=1.2cm, align=center, font=\sffamily},
@@ -431,7 +431,7 @@ To achieve turbulent separation at $x/L=1$ with $Re_L = \num{1e5}$, it requires 
     % Turbulent to Separated Flow
     \draw[arrow] (turb.east) -- node[above, label_text] {\textbf{Turbulent Separation} \\$H_E \leq 1.46$} (sepFlow.west);
     \end{tikzpicture}
-    \vspace{0.5cm} 
+    \vspace{1.5cm} 
     
     % Add your caption here
     \caption{Flowchart describing the evolution of the boundary layer and the conditions for transitioning between regimes.}
@@ -445,22 +445,22 @@ To achieve turbulent separation at $x/L=1$ with $Re_L = \num{1e5}$, it requires 
      \begin{subfigure}[b]{0.495\textwidth}
          \centering
          \includegraphics[width=\textwidth]{Week_2/Exercise6a.eps}
-         \caption{Momentum thickness for $Re_L = \num{1e6}$}
+         \caption{Momentum thickness for zero-pressure-gradient.}
      \end{subfigure}
      \begin{subfigure}[b]{0.495\textwidth}
          \centering
          \includegraphics[width=\textwidth]{Week_2/Exercise6b.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e6}$}
+         \caption{Energy shape factor, $H_E$, for zero-pressure-gradient.}
      \end{subfigure}
      \begin{subfigure}[b]{0.495\textwidth}
          \centering
          \includegraphics[width=\textwidth]{Week_2/Exercise6c.eps}
-         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e7}$}
+         \caption{Momentum thickness for $du/dx = -0.25$.}
      \end{subfigure}
      \begin{subfigure}[b]{0.495\textwidth}
          \centering
          \includegraphics[width=\textwidth]{Week_2/Exercise6d.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e7}$}         \label{fig:five over x}
+         \caption{Energy shape factor, $H_E$, for $du/dx = -0.25$.}         \label{fig:five over x}
      \end{subfigure}
     \caption{Plots of momentum thickness and energy shape factor against distance for zero-pressure-gradient, and two values of Reynolds number. (Exercise 6)}
 \end{figure}
