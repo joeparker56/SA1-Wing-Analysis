@@ -4,7 +4,7 @@ close all;
 
 global re_l dudx u0
 
-re_l = 1e7;
+re_l = 1e6;
 dudx =  -0.5;
 u0 = 1;
 
@@ -43,7 +43,7 @@ hold on;
 plot(x,thickhist(:,2), 'DisplayName', '\delta_e/L' )
 xlabel('x/L'); ylabel('\theta/L,  \delta_E/L');
 legend;
-print -deps2c Week_2/Exercise5.eps;
+%print -deps2c Week_2/Exercise5.eps;
 
 
 figure;

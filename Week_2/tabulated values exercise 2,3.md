@@ -24,9 +24,9 @@ EXERCISE 3 — dudx = -0.25 for all cases
 
 
 
-&#x20;                 Re\_L = 1e4          Re\_L = 1e5          Re\_L = 1e6
+&#x20;                 Re\_L = 1e3                  Re\_L = 1e4                     Re\_L = 1e5
 
-Location          0.50 (sep)          0.50 (sep)          0.49 (transition)
+Location          0.50 (sep), Rethet=168          0.50 (sep),Rethet= 531          0.5 (sep), Rethet=1680
 
 
 
@@ -40,7 +40,20 @@ EXERCISE 5
 
 ================================================================
 
+(a)
+ReL = 1e7
 
+dudx = -0.25    x/L=none
+dudx = -0.5     x/L=0.9887
+dudx = -0.95    x/L=0.523
+
+(b)
+
+dudx = -0.5
+
+Re=1e6      x/L=0.0173
+Re=1e7      x/L=0.9887
+Re=1e8      x/L=None
 
 
 
