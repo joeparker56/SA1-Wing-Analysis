@@ -27,8 +27,8 @@
     keepspaces=true,
     showstringspaces=false
 }
-\title{SA1 - Week 1 Report}
-\author{jp2056 }
+\title{SA1 - Week 2 Report}
+\author{Joe Parker, Gereon Leckebusch }
 \date{May 2026}
 
 \begin{document}
@@ -39,7 +39,7 @@
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{Week_2/Exercise1.eps}
-    \caption{Momentum thickness against distance for a flate plate boundary layer in zero pressure gradient. Both the Blausius solution and numerical solution are plotted. (Exercise 1)}
+    \caption{Momentum thickness against distance for a flat plate boundary layer in zero pressure gradient. Both the Blasius solution and numerical solution are plotted. (Exercise 1)}
     \label{fig:placeholder}
 \end{figure}
 \begin{lstlisting}[language=Matlab, caption=The function to evaluate the contribution to the boundary layer integral. (Exercise 1)]
@@ -73,7 +73,7 @@ plot(x, analy);
 hold off;
 xlabel('x/L');
 ylabel('\theta/L');
-legend('Computed \theta', 'Blausius Solution');
+legend('Computed \theta', 'Blasius Solution');
 title('Comparison of Computed and Analytical Theta');
 grid on;
 print -deps2c Week_2/Exercise1.eps;
@@ -94,7 +94,7 @@ print -deps2c Week_2/Exercise1.eps;
          \num{20e6} & 0.17 & 0.19 & 0.22 \\
          \hline
     \end{tabular}
-    \caption{Transition location for varying Reynold's numbers and velocity gradients.}
+    \caption{Transition location for varying Reynolds numbers and velocity gradients.}
     \label{tab:ex2a}
 \end{table}
 \begin{table}[h]
@@ -110,11 +110,11 @@ print -deps2c Week_2/Exercise1.eps;
          \num{20e6} & 1253 & 1308 & 1385 \\
          \hline
     \end{tabular}
-    \caption{$Re_{\theta}$ at transition locations for varying Reynold's numbers and velocity gradients.}
+    \caption{$Re_{\theta}$ at transition locations for varying Reynolds numbers and velocity gradients.}
     \label{tab:ex2a}
 \end{table}
 
-\begin{lstlisting}[language=Matlab, caption={The script for finding the transition location and Reynold's numbers for a flate plate boundary layer with a constant velocity gradient (Exercise 2).}]
+\begin{lstlisting}[language=Matlab, caption={The script for finding the transition location and Reynold's numbers for a flat plate boundary layer with a constant velocity gradient (Exercise 2).}]
 clear;
 close all;
 
@@ -181,7 +181,7 @@ For transition to occur before separation at a velocity gradient of $du/dx=-0.25
     \caption{The separation locations, $x/L$, for laminar boundary layers with a constant velocity gradient $du/dx = -0.25$. (Exercise 3)}
     \label{tab:placeholder}
 \end{table}
-\begin{lstlisting}[language=Matlab, caption={The script for finding the seperation or transition location of a laminar boundary layer. It is currently set up to find the Reynolds number at which transition supplants seperation. (Exercise 3)}]
+\begin{lstlisting}[language=Matlab, caption={The script for finding the separation or transition location of a laminar boundary layer. It is currently set up to find the Reynolds number at which transition supplants separation. (Exercise 3)}]
 clear;
 close all;
 
@@ -336,7 +336,7 @@ print -deps2c Week_2/Exercise4.eps;
     \caption{Separation locations for a turbulent boundary layer with $du/dx=-0.5$ and different Reynolds numbers.(Exercise 5)}
     \label{tab:placeholder}
 \end{table}
-\begin{lstlisting}[language=Matlab, caption={Script for finding the location of turbulent seperation points. (Exercise 5)}]
+\begin{lstlisting}[language=Matlab, caption={Script for finding the location of turbulent separation points. (Exercise 5)}]
 clear;
 close all;
 
@@ -447,7 +447,7 @@ close all;
 global re_l dudx u0
 
 np = 101;
-%for turbulent seperation at x/L=1, dudx = -0.383
+%for turbulent separation at x/L=1, dudx = -0.383
 x = linspace(0,1,np); %length varies from 0->1
 dudx = -0.383; %dimensionless gradient
 re_l = 1e5;
@@ -460,9 +460,9 @@ Hes(1) = 1.57258;
 laminar = true;
 integ = 0;
 int = 0; %location of laminar->turbulent transition
-ils = 0; %location of laminar seperation
+ils = 0; %location of laminar separation
 itr = 0; %location of turbulent reattachment 
-its = 0; %location of turbulent seperation
+its = 0; %location of turbulent separation
 i=1;
 u_ = linspace(1, 1+dudx, np);
 while laminar && i<np
@@ -523,7 +523,7 @@ if itr ~= 0
     disp(['Turbulent Reattachment at x = ' num2str(x(itr)) ', Rethet/1000 = ' num2str(re_l * u_(itr) * theta(itr) / 1000)])
 end
 if its ~= 0  
-    disp(['Turbulent Seperation at x = ' num2str(x(its)) ', Rethet/1000 = ' num2str(re_l * u_(its) * theta(its) / 1000)])
+    disp(['Turbulent separation at x = ' num2str(x(its)) ', Rethet/1000 = ' num2str(re_l * u_(its) * theta(its) / 1000)])
 end
 if int==0 && ils ==0
     disp('No transition or separation')
@@ -539,13 +539,13 @@ if int ~= 0
     xline(x(int), '-', 'Laminar Transition')
 end
 if ils ~= 0
-    xline(x(ils), '-', 'Laminar Seperation')
+    xline(x(ils), '-', 'Laminar separation')
 end
 if itr ~= 0
     xline(x(itr), '-', 'Turbulent Reattachment')
 end
 if its ~= 0  
-    xline(x(its), '-', 'Turbulent Seperation')
+    xline(x(its), '-', 'Turbulent separation')
 end
 
 
@@ -558,13 +558,13 @@ if int ~= 0
     xline(x(int), '-', 'Laminar Transition')
 end
 if ils ~= 0
-    xline(x(ils), '-', 'Laminar Seperation')
+    xline(x(ils), '-', 'Laminar separation')
 end
 if itr ~= 0
     xline(x(itr), '-', 'Turbulent Reattachment')
 end
 if its ~= 0  
-    xline(x(its), '-', 'Turbulent Seperation')
+    xline(x(its), '-', 'Turbulent separation')
 end
 
 \end{lstlisting}
