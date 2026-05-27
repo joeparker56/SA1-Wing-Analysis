@@ -24,9 +24,9 @@ EXERCISE 3 — dudx = -0.25 for all cases
 
 
 
-&#x20;                 Re\_L = 1e4          Re\_L = 1e5          Re\_L = 1e6
+&#x20;                 Re\_L = 1e3                  Re\_L = 1e4                     Re\_L = 1e5
 
-Location          0.50 (sep)          0.50 (sep)          0.49 (transition)
+Location          0.50 (sep), Rethet=168          0.50 (sep),Rethet= 531          0.5 (sep), Rethet=1680
 
 
 
@@ -39,6 +39,8 @@ Re\_L at which transition first occurs before separation: 895,679
 EXERCISE 5
 
 ================================================================
+
+
 
 
 
