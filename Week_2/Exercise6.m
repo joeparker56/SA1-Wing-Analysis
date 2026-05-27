@@ -4,9 +4,9 @@ close all;
 global re_l dudx u0
 
 np = 101;
-
+%for turbulent seperation at x/L=1, dudx = -0.383
 x = linspace(0,1,np); %length varies from 0->1
-dudx = -0.5; %dimensionless gradient
+dudx = -0.383; %dimensionless gradient
 re_l = 1e5;
 
 theta = zeros(1,np);  %theta squared at each position
@@ -64,8 +64,8 @@ else
     H = 2.803;        
 end 
 if its ~= 0
-    Hes(i+1:np) = Hes(i);
-    theta(i+1:np) = theta(i).*(u_(i)./u_(i+1:np)).^(H+2);
+    Hes(its+1:np) = Hes(i);
+    theta(its+1:np) = theta(i).*(u_(i)./u_(i+1:np)).^(H+2);
 end
 
 
@@ -104,6 +104,8 @@ end
 if its ~= 0  
     xline(x(its), '-', 'Turbulent Seperation')
 end
+
+
 
 figure;
 plot(x, Hes);
