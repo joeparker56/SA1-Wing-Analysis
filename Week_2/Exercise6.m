@@ -6,8 +6,8 @@ global re_l dudx u0
 np = 101;
 %for turbulent seperation at x/L=1, dudx = -0.383
 x = linspace(0,1,np); %length varies from 0->1
-dudx = -0.383; %dimensionless gradient
-re_l = 1e5;
+dudx = 0.; %dimensionless gradient
+re_l = 1e7;
 
 theta = zeros(1,np);  %theta squared at each position
 Hes = zeros(1,np);
@@ -106,11 +106,11 @@ if its ~= 0
 end
 
 
-
 figure;
 plot(x, Hes);
 xlabel('x/L');
-ylabel('He')
+ylabel('He');
+ylim([1.3,2.0]);
 if int ~= 0
     xline(x(int), '-', 'Laminar Transition')
 end
@@ -123,3 +123,4 @@ end
 if its ~= 0  
     xline(x(its), '-', 'Turbulent Seperation')
 end
+print -deps2c Week_2/Exercise6_1e7_0_He.eps;
