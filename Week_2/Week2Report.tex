@@ -400,7 +400,7 @@ To achieve turbulent separation at $x/L=1$ with $Re_L = \num{1e5}$, it requires 
     \centering % This centers the diagram, giving it equal space on the sides
     
     % Optional: Add some vertical space before the diagram
-    \vspace{1cm}
+    \vspace{2cm}
     \begin{tikzpicture}[
         % Define styles for the boxes and arrows
         box/.style = {draw, rectangle, minimum width=2.5cm, minimum height=1.2cm, align=center, font=\sffamily},
@@ -438,6 +438,33 @@ To achieve turbulent separation at $x/L=1$ with $Re_L = \num{1e5}$, it requires 
     \label{fig:bl_transition} % Useful if you need to reference this figure in your text
 
 \end{figure}
+
+
+\begin{figure}[h!]
+     \centering
+     \begin{subfigure}[b]{0.495\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6a.eps}
+         \caption{Momentum thickness for $Re_L = \num{1e6}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.495\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6b.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e6}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.495\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6c.eps}
+         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e7}$}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.495\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Week_2/Exercise6d.eps}
+         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e7}$}         \label{fig:five over x}
+     \end{subfigure}
+    \caption{Plots of momentum thickness and energy shape factor against distance for zero-pressure-gradient, and two values of Reynolds number. (Exercise 6)}
+\end{figure}
+
 
 
 \begin{lstlisting}[language=Matlab, caption={Script for plotting the boundary layer thickness and shape factor for varying Reynolds numbers and velocity gradients. (Exercise 6)}]
@@ -571,65 +598,6 @@ end
 
 
 
-\begin{figure}[h]
-     \centering
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0_thet.eps}
-         \caption{Momentum thickness for $Re_L = \num{1e6}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0_He.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e6}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e7_0_thet.eps}
-         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e7}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e7_0_He.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e7}$}         \label{fig:five over x}
-     \end{subfigure}
-    \caption{Plots of momentum thickness and energy shape factor against distance for zero-pressure-gradient, and two values of Reynolds number. (Exercise 6)}
-\end{figure}
-
-\begin{figure}[h]
-     \centering
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e4_0.25_thet.eps}
-         \caption{Momentum thickness for $Re_L = \num{1e4}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e4_0.25_He.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e4}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e5_0.25_thet.eps}
-         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e5}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e5_0.25_He.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e5}$}         \label{fig:five over x}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0.25_thet.eps}
-         \caption{Momentum thickness, $\theta/L$ for $Re_L = \num{1e6}$}
-     \end{subfigure}
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{Week_2/Exercise6_1e6_0.25_He.eps}
-         \caption{Energy shape factor, $H_E$ for $Re_L = \num{1e6}$}         \label{fig:five over x}
-     \end{subfigure}
-    \caption{Plots of momentum thickness and energy shape factor against distance for $du/dx = -0.25$, and three values of Reynolds number. (Exercise 6)}
-\end{figure}
 
 
 \end{document}
