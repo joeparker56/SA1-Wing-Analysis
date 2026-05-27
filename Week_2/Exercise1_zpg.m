@@ -23,6 +23,6 @@ plot(x, analy);
 hold off;
 xlabel('x/L');
 ylabel('\theta/L');
-legend('Computed \theta', 'Blausius Solution');
+legend('Computed \theta', 'Blasius Solution');
 grid on;
 print -deps2c Week_2/Exercise1.eps;

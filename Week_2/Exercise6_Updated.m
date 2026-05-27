@@ -96,30 +96,28 @@ print -deps2c Week_2/Exercise6d.eps;
 
 
 function add_bl_labels(x, y, i_nt, i_ls, i_tr, i_ts, color)
-    % Plots markers and text labels for boundary layer events.
-    % Uses 'HandleVisibility', 'off' so markers don't clutter the legend.
-    
-    % Natural Transition (Circle)
+
+    % Natural Transition 
     if i_nt > 0 && ~isnan(i_nt)
-        plot(x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color, 'HandleVisibility', 'off');
+        plot(x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color);
         text(x(i_nt), y(i_nt), '    Natural transition          ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
     end
     
-    % Laminar Separation (Square)
+    % Laminar Separation 
     if i_ls > 0 && ~isnan(i_ls)
-        plot(x(i_ls), y(i_ls), [color 'o'], 'MarkerFaceColor', color, 'HandleVisibility', 'off');
+        plot(x(i_ls), y(i_ls), [color 'o'], 'MarkerFaceColor', color);
         text(x(i_ls), y(i_ls), '  Laminar Separation      ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
     end
     
-    % Turbulent Reattachment (Triangle)
+    % Turbulent Reattachment 
     if i_tr > 0 && ~isnan(i_tr)
-        plot(x(i_tr), y(i_tr), [color 'o'], 'MarkerFaceColor', color, 'HandleVisibility', 'off');
+        plot(x(i_tr), y(i_tr), [color 'o'], 'MarkerFaceColor', color);
         text(x(i_tr), y(i_tr), '  Turbulent Reattachment       ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'top', 'HorizontalAlignment','left');
     end
     
-    % Turbulent Separation (Cross)
+    % Turbulent Separation 
     if i_ts > 0 && ~isnan(i_ts)
-        plot(x(i_ts), y(i_ts), [color 'o'], 'MarkerFaceColor',color, 'HandleVisibility', 'off');
-        text(x(i_ts), y(i_ts), '  Turbulent Seperation     ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+        plot(x(i_ts), y(i_ts), [color 'o'], 'MarkerFaceColor',color);
+        text(x(i_ts), y(i_ts), '  Turbulent Separation     ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
     end
 end
