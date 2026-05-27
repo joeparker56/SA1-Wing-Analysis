@@ -97,7 +97,7 @@ function add_bl_labels(x, y, i_nt, i_ls, i_tr, i_ts, color)
     % Natural Transition (Circle)
     if i_nt > 0 && ~isnan(i_nt)
         plot(x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color, 'HandleVisibility', 'off');
-        text(x(i_nt), y(i_nt), '    Natural transition     ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+        text(x(i_nt), y(i_nt), '    Natural transition          ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
     end
     
     % Laminar Separation (Square)
