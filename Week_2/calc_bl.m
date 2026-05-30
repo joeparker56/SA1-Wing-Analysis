@@ -1,16 +1,11 @@
 function [theta, Hes, int, ils, itr, its,x] = calc_bl(dudx, re_l)
     global re_l dudx u0
-
     np = 101;
     %for turbulent seperation at x/L=1, dudx = -0.383
     x = linspace(0,1,np); %length varies from 0->1
-    
-        
     theta = zeros(1,np);  %theta squared at each position
     Hes = zeros(1,np);
     Hes(1) = 1.57258;
-    
-    
     laminar = true;
     integ = 0;
     int = 0; %location of laminar->turbulent transition
@@ -54,7 +49,6 @@ function [theta, Hes, int, ils, itr, its,x] = calc_bl(dudx, re_l)
             its = i; %turbulent separation
         end
     end
-    
     if Hes(i)>=1.46
         H =(11*Hes(i) + 15)/(48*Hes(i)-59);
     else
@@ -64,5 +58,4 @@ function [theta, Hes, int, ils, itr, its,x] = calc_bl(dudx, re_l)
         Hes(its+1:np) = Hes(i);
         theta(its+1:np) = theta(i).*(u_(i)./u_(i+1:np)).^(H+2);
     end
-
 end

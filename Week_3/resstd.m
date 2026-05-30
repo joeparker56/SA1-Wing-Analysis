@@ -3,7 +3,7 @@
 %  Van de Vooren geometry parameters, see vdvfoil.m.
 
 %  free-stream incidence
-alpha = 0;
+alpha = pi/12;
 
 %  Van de Vooren geometry and pressure distribution
 npin = 2000;
@@ -31,8 +31,9 @@ disp('Starting 200 panel calculation ...')
 np = 200;
 [xs ys] = make_upanels( xsin, ysin, np );
 
-A = build_lhs ( xs, ys );
-b = build_rhs ( xs, ys, alpha );
+
+A = build_lhs_fully_vec ( xs, ys );
+b = build_rhs_vec ( xs, ys, alpha );
 
 gams = inv(A) * b;
 xs2 = xs;
@@ -42,9 +43,9 @@ disp('Starting 400 panel calculation ...')
 np = 400;
 [xs ys] = make_upanels( xsin, ysin, np );
 
-A = build_lhs ( xs, ys );
-b = build_rhs ( xs, ys, alpha );
 
+A = build_lhs_fully_vec ( xs, ys );
+b = build_rhs_vec ( xs, ys, alpha );
 gams = inv(A) * b;
 xs4 = xs;
 cp4 = 1 - gams.^2;
@@ -53,8 +54,9 @@ disp('Starting 800 panel calculation ...')
 np = 800;
 [xs ys] = make_upanels( xsin, ysin, np );
 
-A = build_lhs ( xs, ys );
-b = build_rhs ( xs, ys, alpha );
+
+A = build_lhs_fully_vec ( xs, ys );
+b = build_rhs_vec ( xs, ys, alpha );
 
 gams = inv(A) * b;
 xs8 = xs;
