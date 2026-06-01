@@ -1,5 +1,5 @@
     function [int ils itr its delstar theta] = bl_solv(x,cp)
-        global Re dudx u0
+        global re_l dudx u0
         np = length(x)+1;
         delstar = zeros(1,np);
         ue = [1,sqrt(1-cp)];
@@ -19,8 +19,8 @@
     
         dudx = dudxs(1);
         integ = integ + ueintbit(xdash(1), ue(1), xdash(2), ue(2));
-        theta(2) = sqrt((0.45/Re) * ue(2)^(-6) * integ);
-        m = -Re * theta(2)^2  * dudx;
+        theta(2) = sqrt((0.45/re_l) * ue(2)^(-6) * integ);
+        m = -re_l * theta(2)^2  * dudx;
         H = thwaites_lookup(m);
         delstar(2) = H*theta(2);
         Hes(2) = laminar_He(H);
@@ -30,12 +30,12 @@
             i=i+1;
             dudx = dudxs(i-1);  %calculating theta i , so need to use dudx from the region before we get to i
             integ = integ + ueintbit(xdash(i), ue(i), xdash(i+1), ue(i+1));
-            theta(i) = sqrt((0.45/Re) * ue(i+1)^(-6) * integ);
-            m = -Re * theta(i)^2  * dudx;
+            theta(i) = sqrt((0.45/re_l) * ue(i+1)^(-6) * integ);
+            m = -re_l * theta(i)^2  * dudx;
             H = thwaites_lookup(m);
             delstar(i) = H*theta(i);
             Hes(i) = laminar_He(H);
-            re_thet = Re * ue(i+1) * theta(i);
+            re_thet = re_l * ue(i+1) * theta(i);
             if log(re_thet) >= 18.4*Hes(i) - 21.74
                 laminar = false;    %transition
                 int = i;
