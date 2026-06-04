@@ -35,7 +35,7 @@ Am1 = inv(A);
 
 %  Loop over alpha values
 for nalpha = 1:length(alpha)
-
+    
 %    rhs of equations
   alfrad = pi * alpha(nalpha)/180;
   b = build_rhs_vec ( xs, ys, alfrad );
@@ -45,7 +45,9 @@ for nalpha = 1:length(alpha)
 
 %    calculate cp distribution and overall circulation
   [cp circ] = potential_op ( xs, ys, gam );
+  figure;
 
+  
 %    locate stagnation point and calculate stagnation panel length
   [ipstag fracstag] = find_stag(gam);
   dsstag = sqrt((xs(ipstag+1)-xs(ipstag))^2 + (ys(ipstag+1)-ys(ipstag))^2);
@@ -134,9 +136,26 @@ for nalpha = 1:length(alpha)
     upperbl = sprintf ( '%s\n%s%5.3f', upperbl, ... 
                         '    Turbulent separation at x = ', xs(is) );
   end
+        
+  iunt = ipstag + 1 - iunt;
+  iuls = ipstag + 1 - iuls;
+  iutr = ipstag + 1 - iutr;
+  iuts = ipstag + 1 - iuts;
+
   upperbl = sprintf ( '%s\n', upperbl );
   disp(upperbl)
 
+  ax1 = nexttile;
+
+    plot(ax1, xs, -cp)
+    xlabel('x')
+    ylabel('-cp')
+    title(['alpha = ' num2str(alpha(nalpha))])
+
+    
+  hold on;
+   add_bl_labels(xs, -cp, iunt, iuls, iutr, iuts, 'blue');
+   hold off;
   lowerbl = sprintf ( '%s', '  Lower surface boundary layer:' );
   if ilnt~=0
     is = ipstag + ilnt;
@@ -160,7 +179,19 @@ for nalpha = 1:length(alpha)
   end
   lowerbl = sprintf ( '%s\n', lowerbl );
   disp(lowerbl)
+  ilnt = ipstag + ilnt;
+  ills = ipstag + ills;
+  iltr = ipstag + iltr;
+  ilts = ipstag + ilts;
 
+  hold on;
+       add_bl_labels(xs, -cp, ilnt, ills, iltr, ilts, 'red');
+    hold off;
+    ax2 = nexttile;
+    plot(ax2, xs, ys)
+    xlabel('x')
+    ylabel('y')
+    linkaxes([ax1, ax2], 'x');
 %    save data for this alpha
   fname = ['Data/' caseref '_' num2str(alpha(nalpha)) '.mat'];
   save ( fname, 'Cl', 'Cd', 'xs', 'cp', ...
@@ -173,3 +204,30 @@ end
 
 fname = ['Data/' caseref '.mat'];
 save ( fname, 'xs', 'ys', 'alpha', 'clswp', 'cdswp', 'lovdswp' )
+
+function add_bl_labels(x, y, i_nt, i_ls, i_tr, i_ts, color)
+
+    % Natural Transition 
+    if i_nt > 0 && ~isnan(i_nt)
+        plot( x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color);
+        text( x(i_nt), y(i_nt), '    Natural transition          ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+    end
+    
+    % Laminar Separation 
+    if i_ls > 0 && ~isnan(i_ls)
+        plot( x(i_ls), y(i_ls), [color 'o'], 'MarkerFaceColor', color);
+        text( x(i_ls), y(i_ls), '  Laminar Separation      ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+    end
+    
+    % Turbulent Reattachment 
+    if i_tr > 0 && ~isnan(i_tr)
+        plot( x(i_tr), y(i_tr), [color 'o'], 'MarkerFaceColor', color);
+        text( x(i_tr), y(i_tr), '  Turbulent Reattachment       ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'top', 'HorizontalAlignment','left');
+    end
+    
+    % Turbulent Separation 
+    if i_ts > 0 && ~isnan(i_ts)
+        plot( x(i_ts), y(i_ts), [color 'o'], 'MarkerFaceColor',color);
+        text( x(i_ts), y(i_ts), '  Turbulent Separation     ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+    end
+end
