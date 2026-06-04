@@ -30,7 +30,7 @@ nphr = 5*np;
 [xs ys] = make_upanels ( xsin, ysin, np );
 
 %  Assemble the lhs of the equations for the potential flow calculation
-A = build_lhs ( xs, ys );
+A = build_lhs_fully_vec ( xs, ys );
 Am1 = inv(A);
 
 %  Loop over alpha values
@@ -38,7 +38,7 @@ for nalpha = 1:length(alpha)
 
 %    rhs of equations
   alfrad = pi * alpha(nalpha)/180;
-  b = build_rhs ( xs, ys, alfrad );
+  b = build_rhs_vec ( xs, ys, alfrad );
 
 %    solve for surface vortex sheet strength
   gam = Am1 * b;
@@ -72,7 +72,7 @@ for nalpha = 1:length(alpha)
 %    boundary layer solver
   [iunt iuls iutr iuts delstaru thetau] = bl_solv ( su, cpu );
 
-%    lower surface boundary layer calc
+  %    lower surface boundary layer calc
 
 %    first assemble pressure distribution along bl
   clear sl cpl
@@ -93,6 +93,7 @@ for nalpha = 1:length(alpha)
 
 %    boundary layer solver
   [ilnt ills iltr ilts delstarl thetal] = bl_solv ( sl, cpl );
+    
 
 %    lift and drag coefficients
   [Cl Cd] = forces ( circ, cp, delstarl, thetal, delstaru, thetau );

@@ -1,5 +1,5 @@
 %  Zero pressure gradient b-l; bl_solv and Blasius
-
+close all;
 clear all
 global Re
 

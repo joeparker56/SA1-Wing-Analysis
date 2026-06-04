@@ -1,0 +1,4 @@
+Section identifier              : weird_foil
+Number of panels                : 500
+Reynolds number                 : 20e6
+Range of incidences (degrees)   : 0:5:10
