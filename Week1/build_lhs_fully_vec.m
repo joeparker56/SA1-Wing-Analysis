@@ -36,12 +36,12 @@ function lhsmat = build_lhs_fully_vec(xs, ys)
 
     %set up the equation that gamma_np+1 = gamma_1
     lhsmat(np, 1) = 1;
-    lhsmat(np, np+1) = -1;
+    lhsmat(np, np+1) = 1;
     
     %set up the equation that gamma_1 = 0
-    lhsmat(np+1,1)=-1;
-    lhsmat(np+1,2)=+1;
-    lhsmat(np+1,3)=-0.5;
-    lhsmat(np+1,np-1)=-1;
-    lhsmat(np+1,np)=0.5;
+    lhsmat(np+1,1)=1;
+    lhsmat(np+1,2)=-1;
+    lhsmat(np+1,3)=0.5;
+    lhsmat(np+1,np-1)=-0.5;
+    lhsmat(np+1,np)=1.0;
 end

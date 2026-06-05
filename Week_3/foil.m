@@ -120,27 +120,31 @@ for nalpha = 1:length(alpha)
     is = ipstag + 1 - iunt;
     upperbl = sprintf ( '%s\n%s%5.3f', upperbl, ... 
                         '    Natural transition at x = ', xs(is) );
+      iunt = ipstag + 1 - iunt;
+
   end
   if iuls~=0
     is = ipstag + 1 - iuls;
     upperbl = sprintf ( '%s\n%s%5.3f', upperbl, ... 
                         '    Laminar separation at x = ', xs(is) );
+      iuls = ipstag + 1 - iuls;
+
     if iutr~=0
       is = ipstag + 1 - iutr;
       upperbl = sprintf ( '%s\n%s%5.3f', upperbl, ... 
                           '    Turbulent reattachment at x = ', xs(is) );
+        iutr = ipstag + 1 - iutr;
+
     end
   end
   if iuts~=0
     is = ipstag + 1 - iuts;
     upperbl = sprintf ( '%s\n%s%5.3f', upperbl, ... 
                         '    Turbulent separation at x = ', xs(is) );
+      iuts = ipstag + 1 - iuts;
+
   end
         
-  iunt = ipstag + 1 - iunt;
-  iuls = ipstag + 1 - iuls;
-  iutr = ipstag + 1 - iutr;
-  iuts = ipstag + 1 - iuts;
 
   upperbl = sprintf ( '%s\n', upperbl );
   disp(upperbl)
@@ -151,44 +155,51 @@ for nalpha = 1:length(alpha)
     xlabel('x')
     ylabel('-cp')
     title(['alpha = ' num2str(alpha(nalpha))])
+    text(0.8,0.3*max(abs(-cp)), ['L/D = ' num2str(Cl/Cd)])
+    text(0.8,0.6*max(abs(-cp)), ['Cl = ' num2str(Cl)])
+    text(0.8,0.9*max(abs(-cp)), ['Cd = ' num2str(Cd)])
 
-    
-  hold on;
-   add_bl_labels(xs, -cp, iunt, iuls, iutr, iuts, 'blue');
-   hold off;
+  hold(ax1, 'on');
+   add_bl_labels(ax1,xs, -cp, iunt, iuls, iutr, iuts, 'blue');
+  hold(ax1, 'off');
   lowerbl = sprintf ( '%s', '  Lower surface boundary layer:' );
   if ilnt~=0
     is = ipstag + ilnt;
     lowerbl = sprintf ( '%s\n%s%5.3f', lowerbl, ... 
                         '    Natural transition at x = ', xs(is) );
+      ilnt = ipstag + ilnt;
+
   end
   if ills~=0
     is = ipstag + ills;
     lowerbl = sprintf ( '%s\n%s%5.3f', lowerbl, ... 
                         '    Laminar separation at x = ', xs(is) );
+      ills = ipstag + ills;
     if iltr~=0
       is = ipstag + iltr;
       lowerbl = sprintf ( '%s\n%s%5.3f', lowerbl, ... 
                           '    Turbulent reattachment at x = ', xs(is) );
+        iltr = ipstag + iltr;
+
     end
   end
   if ilts~=0
     is = ipstag + ilts;
     lowerbl = sprintf ( '%s\n%s%5.3f', lowerbl, ... 
                         '    Turbulent separation at x = ', xs(is) );
+      ilts = ipstag + ilts;
+
   end
   lowerbl = sprintf ( '%s\n', lowerbl );
   disp(lowerbl)
-  ilnt = ipstag + ilnt;
-  ills = ipstag + ills;
-  iltr = ipstag + iltr;
-  ilts = ipstag + ilts;
 
-  hold on;
-       add_bl_labels(xs, -cp, ilnt, ills, iltr, ilts, 'red');
-    hold off;
+
+  hold(ax1, 'on');
+       add_bl_labels(ax1, xs, -cp, ilnt, ills, iltr, ilts, 'red');
+  hold(ax1, 'off');
     ax2 = nexttile;
     plot(ax2, xs, ys)
+    axis equal;
     xlabel('x')
     ylabel('y')
     linkaxes([ax1, ax2], 'x');
@@ -205,24 +216,24 @@ end
 fname = ['Data/' caseref '.mat'];
 save ( fname, 'xs', 'ys', 'alpha', 'clswp', 'cdswp', 'lovdswp' )
 
-function add_bl_labels(x, y, i_nt, i_ls, i_tr, i_ts, color)
+function add_bl_labels(ax,x, y, i_nt, i_ls, i_tr, i_ts, color)
 
     % Natural Transition 
     if i_nt > 0 && ~isnan(i_nt)
-        plot( x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color);
-        text( x(i_nt), y(i_nt), '    Natural transition          ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+        plot(ax, x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color);
+        text(ax, x(i_nt), y(i_nt), '    Natural transition          ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
     end
     
     % Laminar Separation 
     if i_ls > 0 && ~isnan(i_ls)
-        plot( x(i_ls), y(i_ls), [color 'o'], 'MarkerFaceColor', color);
-        text( x(i_ls), y(i_ls), '  Laminar Separation      ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+        plot(ax, x(i_ls), y(i_ls), [color 'o'], 'MarkerFaceColor', color);
+        text(ax, x(i_ls), y(i_ls), '  Laminar Separation      ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
     end
     
     % Turbulent Reattachment 
     if i_tr > 0 && ~isnan(i_tr)
-        plot( x(i_tr), y(i_tr), [color 'o'], 'MarkerFaceColor', color);
-        text( x(i_tr), y(i_tr), '  Turbulent Reattachment       ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'top', 'HorizontalAlignment','left');
+        plot(ax, x(i_tr), y(i_tr), [color 'o'], 'MarkerFaceColor', color);
+        text(ax, x(i_tr), y(i_tr), '  Turbulent Reattachment       ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'top', 'HorizontalAlignment','left');
     end
     
     % Turbulent Separation 
