@@ -45,7 +45,6 @@ for nalpha = 1:length(alpha)
 
 %    calculate cp distribution and overall circulation
   [cp circ] = potential_op ( xs, ys, gam );
-  figure;
 
   
 %    locate stagnation point and calculate stagnation panel length
@@ -149,19 +148,8 @@ for nalpha = 1:length(alpha)
   upperbl = sprintf ( '%s\n', upperbl );
   disp(upperbl)
 
-  ax1 = nexttile;
 
-    plot(ax1, xs, -cp)
-    xlabel('x')
-    ylabel('-cp')
-    title(['alpha = ' num2str(alpha(nalpha))])
-    text(0.8,0.3*max(abs(-cp)), ['L/D = ' num2str(Cl/Cd)])
-    text(0.8,0.6*max(abs(-cp)), ['Cl = ' num2str(Cl)])
-    text(0.8,0.9*max(abs(-cp)), ['Cd = ' num2str(Cd)])
 
-  hold(ax1, 'on');
-   add_bl_labels(ax1,xs, -cp, iunt, iuls, iutr, iuts, 'blue');
-  hold(ax1, 'off');
   lowerbl = sprintf ( '%s', '  Lower surface boundary layer:' );
   if ilnt~=0
     is = ipstag + ilnt;
@@ -190,25 +178,124 @@ for nalpha = 1:length(alpha)
       ilts = ipstag + ilts;
 
   end
-  lowerbl = sprintf ( '%s\n', lowerbl );
-  disp(lowerbl)
+  fig = figure;
+  
+  % Create a stacked layout (3 rows total: top plot gets 2, bottom gets 1)
+  tiledlayout(3, 1, 'TileSpacing', 'compact');
+  
+  % Define the global X-axis bounds so both plots match perfectly
+  xmin = -0.4;
+  xmax = 1.4;
 
-
+  % ==========================================
+  % TOP PLOT: -Cp Distribution
+  % ==========================================
+  ax1 = nexttile([2 1]);
   hold(ax1, 'on');
-       add_bl_labels(ax1, xs, -cp, ilnt, ills, iltr, ilts, 'red');
+  
+  % Suction side (upper surface) in blue, pressure side (lower) in red
+  % (split at the stagnation panel; include ipstag in both so they join)
+  plot(ax1, xs(1:ipstag),   -cp(1:ipstag),   'b-', 'LineWidth', 1.5)
+  plot(ax1, xs(ipstag:end), -cp(ipstag:end), 'r-', 'LineWidth', 1.5)
+  
+  % Add boundary layer labels
+  add_bl_labels(ax1, xs, -cp, iunt, iuls, iutr, iuts, 'blue', 'bottom');
+  add_bl_labels(ax1, xs, -cp, ilnt, ills, iltr, ilts, 'red', 'top');
+  
+  % Data Box - left-aligned text, pinned to the top-right corner
+  info_box = sprintf('C_L = %.4f\nC_D = %.6f\nL/D = %.2f', Cl, Cd, Cl/Cd);
+  t = text(ax1, 0.95, 0.95, info_box, 'Units', 'normalized', ...
+      'VerticalAlignment', 'top', 'HorizontalAlignment', 'left', ...
+      'BackgroundColor', 'white', 'EdgeColor', 'black', 'Margin', 5, 'FontSize', 10);
+  % Shift left by the box width so its right edge stays in the corner
+  drawnow;
+  t.Position(1) = 0.95 - t.Extent(3);
+      
+  ylabel(ax1, '-Cp')
+  title(ax1, ['alpha = ' num2str(alpha(nalpha))])
+  grid(ax1, 'on');
   hold(ax1, 'off');
-    ax2 = nexttile;
-    plot(ax2, xs, ys)
-    axis equal;
-    xlabel('x')
-    ylabel('y')
-    linkaxes([ax1, ax2], 'x');
-%    save data for this alpha
-  fname = ['Data/' caseref '_' num2str(alpha(nalpha)) '.mat'];
-  save ( fname, 'Cl', 'Cd', 'xs', 'cp', ...
-         'sl', 'delstarl', 'thetal', 'lowerbl', ...
-         'su', 'delstaru', 'thetau', 'upperbl' )
 
+  % ==========================================
+  % BOTTOM PLOT: Airfoil & Streamlines
+  % ==========================================
+  ax2 = nexttile;
+  hold(ax2, 'on');
+  
+  % 1. Streamlines
+  ymin = -max(ys)*1.5;
+  ymax = -ymin;
+  x_grid = linspace(xmin, xmax, 100);
+  y_grid = linspace(ymin, ymax, 100);
+  [xm, ym] = meshgrid(x_grid, y_grid);
+  
+  psi = ym*cos(alfrad) - xm*sin(alfrad);
+  for s = 1:np
+      [infa, infb] = panelinf_vec(xs(s), ys(s), xs(s+1), ys(s+1), xm, ym);
+      psi = psi + gam(s)*infa + gam(s+1)*infb;
+  end
+
+  % Velocity field from the streamfunction: u = d(psi)/dy, v = -d(psi)/dx
+  [dpsidx, dpsidy] = gradient(psi, x_grid, y_grid);
+  u = dpsidy;
+  v = -dpsidx;
+  speed = sqrt(u.^2 + v.^2);
+
+  % Blank out points inside the airfoil (psi there is non-physical)
+  speed(inpolygon(xm, ym, xs, ys)) = NaN;
+
+  % Colour-coded velocity-magnitude background.
+  % Use fixed levels and colour limits so a given velocity (e.g. the
+  % free-stream value of 1) always maps to the same colour across cases.
+  vmax = 2;                              % top of the colour scale (V/Vinf)
+  vlevels = linspace(0, vmax, 41);
+  contourf(ax2, xm, ym, speed, vlevels, 'LineColor', 'none');
+  colormap(ax2, 'jet');
+  clim(ax2, [0 vmax]);                   % lock the colour axis (use caxis on older MATLAB)
+  cb = colorbar(ax2);
+  ylabel(cb, 'u/U_\infty');
+
+  % Streamlines overlaid as thin black contours of psi
+  c = -0.5:0.025:0.5;
+  contour(ax2, xm, ym, psi, c, 'LineColor', 'k', 'LineWidth', 0.5);
+
+  % 2. Airfoil Geometry
+  plot(ax2, xs, ys, 'Color', 'black', 'LineWidth', 2)
+    
+  add_bl_labels(ax2, xs, ys, iunt, iuls, iutr, iuts, 'blue', 'bottom');
+  add_bl_labels(ax2, xs, ys, ilnt, ills, iltr, ilts, 'red', 'top');
+  % 3. Stagnation Point
+  x_stag = xs(ipstag) + fracstag * (xs(ipstag+1) - xs(ipstag));
+  y_stag = ys(ipstag) + fracstag * (ys(ipstag+1) - ys(ipstag));
+  plot(ax2, x_stag, y_stag, 'o', 'Color', [0 0.6 0], 'MarkerFaceColor', [0 0.6 0], 'MarkerSize', 6);
+  text(ax2, x_stag - 0.03, y_stag, 'Stag', 'Color', [0 0.6 0], ...
+      'VerticalAlignment', 'middle', 'HorizontalAlignment', 'right', 'FontSize', 9, ...
+      'FontWeight', 'bold', 'BackgroundColor', 'white', 'EdgeColor', [0 0.6 0], 'Margin', 1);
+
+  ylabel(ax2, 'y')
+  xlabel(ax2, 'x')
+  
+  % Set physical scaling to 1:1 so the airfoil isn't squashed
+  % Do NOT use "axis equal" here!
+  set(ax2, 'DataAspectRatio', [1 1 1]); 
+  ylim(ax2, [ymin ymax]);
+  grid(ax2, 'on');
+  hold(ax2, 'off');
+
+  % ==========================================
+  % ALIGNMENT & SAVING
+  % ==========================================
+  % Link the axes and force the exact same X limits on both
+  linkaxes([ax1, ax2], 'x');
+  xlim(ax1, [xmin xmax]); 
+
+  % save data for this alpha
+  fname = ['Data/' caseref '_' num2str(alpha(nalpha)) '.mat'];
+  save(fname, 'Cl', 'Cd', 'xs', 'cp', ...
+         'sl', 'delstarl', 'thetal', 'lowerbl', ...
+         'su', 'delstaru', 'thetau', 'upperbl');
+  location = ['Joe_Report/plots/' caseref '_' num2str(alpha(nalpha))];
+  print(fig, location, '-deps2c');
 end
 
 %  save alpha sweep data in summary file
@@ -216,29 +303,62 @@ end
 fname = ['Data/' caseref '.mat'];
 save ( fname, 'xs', 'ys', 'alpha', 'clswp', 'cdswp', 'lovdswp' )
 
-function add_bl_labels(ax,x, y, i_nt, i_ls, i_tr, i_ts, color)
+function add_bl_labels(ax,x, y, i_nt, i_ls, i_tr, i_ts, color, alignment)
 
-    % Natural Transition 
-    if i_nt > 0 && ~isnan(i_nt)
-        plot(ax, x(i_nt), y(i_nt), [color 'o'], 'MarkerFaceColor', color);
-        text(ax, x(i_nt), y(i_nt), '    Natural transition          ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+    % Gather the active labels for this surface
+    idx = [i_nt, i_ls, i_tr, i_ts];
+    txt = {'NT', 'LS', 'TR', 'TS'};
+    keep = idx > 0 & ~isnan(idx);
+    idx = idx(keep);
+    lab = txt(keep);
+    if isempty(idx)
+        return
     end
-    
-    % Laminar Separation 
-    if i_ls > 0 && ~isnan(i_ls)
-        plot(ax, x(i_ls), y(i_ls), [color 'o'], 'MarkerFaceColor', color);
-        text(ax, x(i_ls), y(i_ls), '  Laminar Separation      ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+
+    % Modest, fixed vertical offset to lift labels just clear of the curve,
+    % scaled to this plot's y-range so it works on both axes
+    off = 0.05 * (max(y) - min(y));
+    if ~strcmp(alignment, 'bottom')
+        off = -off;   % below the marker for lower-surface (top alignment)
     end
-    
-    % Turbulent Reattachment 
-    if i_tr > 0 && ~isnan(i_tr)
-        plot(ax, x(i_tr), y(i_tr), [color 'o'], 'MarkerFaceColor', color);
-        text(ax, x(i_tr), y(i_tr), '  Turbulent Reattachment       ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'top', 'HorizontalAlignment','left');
+
+    % Sort by x so neighbours that sit on top of each other can be detected
+    xp = x(idx);  xp = xp(:);
+    yp = y(idx);  yp = yp(:);
+    [xp, order] = sort(xp);
+    yp  = yp(order);
+    lab = lab(order);
+
+    % Group labels whose x positions nearly coincide, then fan each group out
+    % sideways so the chips sit next to each other (short diagonal leaders)
+    xthresh = 0.04 * (max(x) - min(x));
+    dxstep  = 0.05 * (max(x) - min(x));
+    grp = ones(numel(xp), 1);
+    for k = 2:numel(xp)
+        if abs(xp(k) - xp(k-1)) < xthresh
+            grp(k) = grp(k-1);          % same cluster
+        else
+            grp(k) = grp(k-1) + 1;      % new cluster
+        end
     end
-    
-    % Turbulent Separation 
-    if i_ts > 0 && ~isnan(i_ts)
-        plot( x(i_ts), y(i_ts), [color 'o'], 'MarkerFaceColor',color);
-        text( x(i_ts), y(i_ts), '  Turbulent Separation     ', 'Color', color, 'FontWeight', 'bold', 'VerticalAlignment', 'bottom', 'HorizontalAlignment','right');
+    for g = unique(grp)'
+        m = find(grp == g);
+        n = numel(m);
+        for j = 1:n
+            hdx = (j - (n+1)/2) * dxstep;   % fan symmetrically about the marker
+            place_label(ax, xp(m(j)), yp(m(j)), hdx, off, lab{m(j)}, color, alignment);
+        end
     end
+end
+
+function place_label(ax, xp, yp, dx, dy, txt, color, alignment)
+    % Marker on the surface
+    plot(ax, xp, yp, 'o', 'Color', color, 'MarkerFaceColor', color, 'MarkerSize', 5);
+    % Thin leader line from the marker to the offset label
+    plot(ax, [xp xp+dx], [yp yp+dy], 'Color', color, 'LineWidth', 0.5);
+    % Label in a white chip for constant contrast against the colour field
+    text(ax, xp+dx, yp+dy, txt, 'Color', color, 'FontWeight', 'bold', ...
+        'FontSize', 9, 'HorizontalAlignment', 'center', ...
+        'VerticalAlignment', alignment, ...
+        'BackgroundColor', 'white', 'EdgeColor', color, 'Margin', 1);
 end
